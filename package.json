@@ -13,7 +13,7 @@
   "scripts": {
     "build": "bun build src/cmd.ts --outdir=dist --minify ",
     "prepublishOnly": "bun scripts/publish.ts",
-    "dev": "bun src/cmd.ts --watch",
+    "dev": "bun --watch src/cmd.ts",
     "version": "bun scripts/version.ts"
   },
   "dependencies": {
@@ -21,7 +21,8 @@
     "@types/react-dom": "^19.2.3",
     "commander": "^14.0.3",
     "lazy-cn": "^1.0.0",
-    "nanoid": "^5.1.7"
+    "nanoid": "^5.1.7",
+    "react-dom": "^19.2.4"
   },
   "bin": {
     "manage-repo": "./dist/cmd.js"
