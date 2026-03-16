@@ -30,7 +30,7 @@ $`bun build src/cmd.ts --outdir=dist --minify`
 // 3. Check if git is clean
 {
   const res = await $`git status --porcelain`.text()
-  if (res.includes("??")) {
+  if (res.trim()) {
     console.error("Git has uncommitted changes. Please commit or stash changes before publishing.")
     process.exit(0)
   }
@@ -44,3 +44,10 @@ $`bun build src/cmd.ts --outdir=dist --minify`
     process.exit(0)
   }
 }
+
+
+
+
+
+
+console.log("All checks passed. Ready to publish!")
