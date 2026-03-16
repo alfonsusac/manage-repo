@@ -2,7 +2,6 @@
 
 import { program } from "commander"
 import readline from "readline"
-import * as Bun from "bun"
 import { startManager } from "./server"
 
 
