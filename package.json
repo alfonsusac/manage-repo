@@ -1,0 +1,29 @@
+{
+  "name": "manage-repo",
+  "description": "A tool to manage your repositories",
+  "version": "0.0.4",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "scripts": {
+    "build": "bun build src/cmd.ts --outdir=dist --minify ",
+    "prepublishOnly": "bun scripts/publish.ts",
+    "dev": "bun src/cmd.ts",
+    "version": "bun scripts/version.ts"
+  },
+  "dependencies": {
+    "@types/node": "^25.5.0",
+    "commander": "^14.0.3"
+  },
+  "bin": {
+    "manage-repo": "./dist/cmd.js"
+  },
+  "files": [
+    "dist"
+  ]
+}
