@@ -19,17 +19,28 @@ import { $ } from "bun"
 $`bun build src/cmd.ts --outdir=dist --minify`
 
 // 3. Check if git is initialized and has a remote
-try {
+{
+  const res = await $`git rev-parse --is-inside-work-tree`.text()
+  if (res.trim() !== "true") {
+    console.error("Git is not initialized. Please run `git init` and add a remote before publishing.")
+    process.exit(0)
+  }
+}
+
+// 3. Check if git is clean
+{
   const res = await $`git status --porcelain`.text()
   if (res.includes("??")) {
     console.error("Git has uncommitted changes. Please commit or stash changes before publishing.")
     process.exit(0)
   }
-} catch (error) {
-  if (error instanceof $.ShellError) {
-    if (error.stderr.includes("Not a git repository"))
-      console.error("Git is not initialized. Please run `git init` and add a remote before publishing.")
-    else
-      console.error("Git error:", error.stderr)
+}
+
+// 4. Check if current commit is pushed to remote
+{
+  const res = await $`git remote`.text()
+  if (!res.trim()) {
+    console.error("Git has no remote. Please add a remote before publishing.")
+    process.exit(0)
   }
 }
