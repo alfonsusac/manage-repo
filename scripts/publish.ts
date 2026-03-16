@@ -13,39 +13,56 @@
 import { $ } from "bun"
 
 // 1. Check if tests are passing
-// TODO - write tests
+// await $`bun test`
+//   .catch(error => {
+//     console.error("Tests failed. Please fix test errors before publishing.")
+//     process.exit(0)
+//   })
 
 // 2. Check if build is working
-$`bun build src/cmd.ts --outdir=dist --minify`
+await $`bun build src/cmd.ts --outdir=dist --minify`
+  .catch(error => {
+    console.error("Build failed. Please fix build errors before publishing.")
+    process.exit(0)
+  })
 
 // 3. Check if git is initialized and has a remote
-{
-  const res = await $`git rev-parse --is-inside-work-tree`.text()
-  if (res.trim() !== "true") {
+await $`git rev-parse --is-inside-work-tree`
+  .text()
+  .then(res => {
+    if (res.trim() === "true") return
     console.error("Git is not initialized. Please run `git init` and add a remote before publishing.")
     process.exit(0)
-  }
-}
+  })
 
 // 3. Check if git is clean
-{
-  const res = await $`git status --porcelain`.text()
-  if (res.trim()) {
+await $`git status --porcelain`
+  .text()
+  .then(res => {
+    if (res.trim() === "") return
     console.error("Git has uncommitted changes. Please commit or stash changes before publishing.")
     process.exit(0)
-  }
-}
+  })
 
-// 4. Check if current commit is pushed to remote
-{
-  const res = await $`git remote`.text()
-  if (!res.trim()) {
+// 4. Check if current commit has remote
+await $`git remote`
+  .text()
+  .then(res => {
+    if (res.trim()) return
     console.error("Git has no remote. Please add a remote before publishing.")
     process.exit(0)
-  }
-}
+  })
 
+// 5. Check if commit is pushed to remote
+await $`git log --branches --not --remotes`
+  .text()
+  .then(res => {
+    if (res.trim() === "") return
+    console.error("Current commit is not pushed to remote. Please push changes before publishing.")
+    process.exit(0)
+  })
 
+// 
 
 
 
