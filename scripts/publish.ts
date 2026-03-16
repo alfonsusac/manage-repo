@@ -11,7 +11,7 @@
 //10. tag the current commit with the new version and push the tag to remote
 
 import { $ } from "bun"
-import { logger } from "./util"
+import { logger, type ChangelogFile } from "./util"
 
 const skipGitCheck = process.argv.includes("--skip-git-check")
 const log = logger("publish")
@@ -77,12 +77,12 @@ if (npmInfo.text().trim() === packageJson.version) {
 
 // 5. Check if changelog.ts has entry for current version
 log("Checking changelog...")
-const { changelog } = await import("../changelog.ts" as string) as { changelog: Record<string, string[]> }
+const { changelog } = await import("../changelog.ts" as string) as { changelog: ChangelogFile }
 if (!changelog[ packageJson.version ]) {
   console.error(`Changelog does not have an entry for version ${ packageJson.version }. Please add an entry to changelog.ts before publishing.`)
   process.exit(1)
 }
-if (!changelog[ packageJson.version ]?.length) {
+if (!changelog[ packageJson.version ]?.changes?.length) {
   console.error(`Changelog entry for version ${ packageJson.version } is empty. Please add changes to the changelog entry before publishing.`)
   process.exit(1)
 }
