@@ -1,4 +1,4 @@
-import type { MaybePromise } from "bun"
+import { $, type MaybePromise } from "bun"
 import { RPCFetchHandlers, ServerEventPublisher, type EventMap } from "./ws-core"
 import { renderToString } from "react-dom/server"
 import path from "path"
@@ -26,9 +26,13 @@ export async function appServer<
   const rpc = RPCFetchHandlers({ methods: config.methods ?? {} })
   // await renderRoot({ routeName: '/index.html', title: "Fullstack Bun App", })
 
+  // Compiling tailwind
+  await $`tailwindcss -i ./src/app/styles.css -o ./src/app/output.css`
+
   // Start the server
   config.logger?.("Starting server...")
   const server = Bun.serve({
+    port: 5756,
     development: {
       console: true,
     },

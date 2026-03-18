@@ -17,6 +17,7 @@
     "version": "bun scripts/version.ts"
   },
   "dependencies": {
+    "@tailwindcss/cli": "^4.2.2",
     "@types/node": "^25.5.0",
     "@types/react-dom": "^19.2.3",
     "bun": "^1.3.11",
