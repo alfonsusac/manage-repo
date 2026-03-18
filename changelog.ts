@@ -1,4 +1,10 @@
 export const changelog = {
+  "0.0.17": {
+    "date": "2026-03-18T18:15:21.627Z",
+    "changes": [
+      "Fix package.json"
+    ]
+  },
   "0.0.16": {
     "date": "2026-03-18T18:14:26.126Z",
     "changes": [
