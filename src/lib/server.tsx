@@ -27,8 +27,9 @@ export async function appServer<
   // await renderRoot({ routeName: '/index.html', title: "Fullstack Bun App", })
 
   // Compiling tailwind
-  console.log("input styles dir", resolve(import.meta.dir, '..', 'app', 'styles.css'))
-  await $`tailwindcss -i ${ resolve(import.meta.dir, '..', 'app', 'styles.css') } -o ${ resolve(import.meta.dir, '..', 'app', 'output.css') }`
+  // console.log("input styles dir", resolve(import.meta.dir, '..', 'app', 'styles.css'))
+  // await $`tailwindcss -i ${ resolve(import.meta.dir, '..', 'app', 'styles.css') } -o ${ resolve(import.meta.dir, '..', 'app', 'output.css') }`
+
 
   // Start the server
   config.logger?.("Starting server...")
@@ -44,8 +45,25 @@ export async function appServer<
     routes: {
       "/ws": upgradeWsRoute,
       ...rpc.routeMap,
-      // "/*": index
-      "/*": config.indexHtml
+      "/*": process.env.NODE_ENV ?
+        async (req) => {
+          // refactor later
+          try {
+            const reqpath = req.url.replace(server.url.toString(), '')
+            const filapath = resolve(import.meta.dir, req.url.replace(server.url.toString(), '') as string)
+            console.log(`path: [${reqpath}][${filapath}]`)
+            if (reqpath === "")
+              return new Response(Bun.file(resolve(import.meta.dir, 'index.html')))
+            const staticFile = Bun.file(filapath)
+            if (!await staticFile.exists()) 
+              return new Response("Not Found", { status: 404 })
+            return new Response(Bun.file(resolve(import.meta.dir, filapath)))
+          } catch (error) {
+            console.error("Error serving static file:", error)
+            return new Response("Not Found", { status: 404 })            
+          }
+        }
+        : config.indexHtml
     },
     websocket: {
       open(ws) {

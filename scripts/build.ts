@@ -4,7 +4,7 @@ import { build } from "bun"
 import plugin from "bun-plugin-tailwind"
 import { existsSync } from "fs"
 import { rm } from "fs/promises"
-import path from "path";
+import path from "path"
 
 console.clear()
 
@@ -17,29 +17,37 @@ if (existsSync(distPath)) {
 }
 
 // Build all the HTML files
-// const result = await build({
-//   entrypoints: [ "./src/cmd.ts" ],
-//   outdir: "dist",
-//   plugins: [ plugin ],
-//   // minify: true,
-//   target: "bun",
-//   // format: "cjs",
-//   format: "esm",
-//   splitting: false,
-//   // naming: {
-//   //   chunk: "dist/[name]-[hash].js",
-//   // },
-//   // sourcemap: true,
-//   // naming: "dist/[dir]/[name].[ext]",
-//   // naming: "[dist]/",
-//   // bytecode: true,
-//   // compile: {
-//   //   outfile: "manage_repo",
-//   // },
-//   define: {
-//     "process.env.NODE_ENV": JSON.stringify("production"),
-//   },
-// })
+const result = await build({
+  entrypoints: [ "./src/cmd.ts" ],
+  outdir: "dist",
+  plugins: [ plugin ],
+  minify: true,
+  target: "bun",
+  format: "esm",
+  splitting: false,
+  
+  // bytecode: true,
+  // compile: {
+  //   outfile: "manage_repo",
+  // },
+  define: {
+    "process.env.NODE_ENV": JSON.stringify("production"),
+  },
+})
+
+// Patch src_default
+// const input = await Bun.file('./dist/cmd.js').text()
+// const output = input
+//   .split('\n')
+//   .map(
+//     line => line.includes("var src_default") ?
+//       line.replaceAll("./", `"+import.meta.dir+"/`)
+//       : line
+//   ).join('\n')
+// await Bun.write('./dist/cmd.js', output)
+
+
+
 
 // Print the results
 const end = performance.now()
@@ -55,8 +63,6 @@ const formatFileSize = (bytes: number): string => {
   }
   return `${ size.toFixed(2) } ${ units[ unitIndex ] }`
 }
-
-
 // const outputTable = result.outputs.map(output => ({
 //   "File": path.relative(process.cwd(), output.path),
 //   "Type": output.kind,
