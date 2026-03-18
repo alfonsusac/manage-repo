@@ -11,12 +11,10 @@
     "typescript": "^5"
   },
   "scripts": {
-    "build": "bun scripts/build.ts",
     "prepublishOnly": "bun scripts/prepublish.ts",
     "postpublish": "bun scripts/postpublish.ts",
     "dev": "bun --watch src/cmd.ts",
-    "version": "bun scripts/version.ts",
-    "start": "bun run build && bun --cwd dist cmd.js "
+    "version": "bun scripts/version.ts"
   },
   "dependencies": {
     "@types/node": "^25.5.0",
@@ -30,7 +28,7 @@
     "tailwindcss": "^4.2.1"
   },
   "bin": {
-    "manage-repo": "./dist/cmd.js"
+    "manage-repo": "./src/cmd.ts"
   },
   "files": [
     "dist"

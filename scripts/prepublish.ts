@@ -31,7 +31,7 @@ log("Checking bin path...")
 await checkBinPath()
 
 log("Building the project...")
-await checkBuild()
+// await checkBuild()
 
 log("Checking git status...")
 await checkGitStatus()

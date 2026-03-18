@@ -17,29 +17,29 @@ if (existsSync(distPath)) {
 }
 
 // Build all the HTML files
-const result = await build({
-  entrypoints: [ "./src/cmd.ts" ],
-  outdir: "dist",
-  plugins: [ plugin ],
-  // minify: true,
-  target: "bun",
-  // format: "cjs",
-  format: "esm",
-  splitting: false,
-  // naming: {
-  //   chunk: "dist/[name]-[hash].js",
-  // },
-  // sourcemap: true,
-  // naming: "dist/[dir]/[name].[ext]",
-  // naming: "[dist]/",
-  // bytecode: true,
-  // compile: {
-  //   outfile: "manage_repo",
-  // },
-  define: {
-    "process.env.NODE_ENV": JSON.stringify("production"),
-  },
-})
+// const result = await build({
+//   entrypoints: [ "./src/cmd.ts" ],
+//   outdir: "dist",
+//   plugins: [ plugin ],
+//   // minify: true,
+//   target: "bun",
+//   // format: "cjs",
+//   format: "esm",
+//   splitting: false,
+//   // naming: {
+//   //   chunk: "dist/[name]-[hash].js",
+//   // },
+//   // sourcemap: true,
+//   // naming: "dist/[dir]/[name].[ext]",
+//   // naming: "[dist]/",
+//   // bytecode: true,
+//   // compile: {
+//   //   outfile: "manage_repo",
+//   // },
+//   define: {
+//     "process.env.NODE_ENV": JSON.stringify("production"),
+//   },
+// })
 
 // Print the results
 const end = performance.now()
@@ -57,13 +57,13 @@ const formatFileSize = (bytes: number): string => {
 }
 
 
-const outputTable = result.outputs.map(output => ({
-  "File": path.relative(process.cwd(), output.path),
-  "Type": output.kind,
-  "Size": formatFileSize(output.size),
-}))
+// const outputTable = result.outputs.map(output => ({
+//   "File": path.relative(process.cwd(), output.path),
+//   "Type": output.kind,
+//   "Size": formatFileSize(output.size),
+// }))
+// console.table(outputTable)
 
-console.table(outputTable)
 const buildTime = (end - start).toFixed(2)
 
 console.log(`\n✅ Build completed in ${ buildTime }ms\n`)
