@@ -1,4 +1,10 @@
 export const changelog = {
+  "0.0.8": {
+    "date": "2026-03-18T11:16:59.299Z",
+    "changes": [
+      "Migrate from old repo to new one"
+    ]
+  },
   "0.0.7": {
     "date": "2026-03-16T17:22:38.728Z",
     "changes": [
