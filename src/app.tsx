@@ -41,9 +41,7 @@ function App() {
     ">
       <div className="max-w-xl w-full mx-auto">
 
-        <RoutePage path="/"
-        // classNames={{ hidden: "-translate-x-1/6" }}
-        >
+        <RoutePage path="/">
           <div className="flex flex-col p-4 bg-bg min-h-screen">
             <header className="gri-d sticky top-0 -mt-4 -mx-4 p-6 bg-bg z-50">
               <div className="font-semibold text-sm text-fg-3">Package Manager</div>
@@ -67,9 +65,7 @@ function App() {
           </div>
         </RoutePage>
 
-        <RoutePage path="/package-json"
-        // classNames={{ hidden: "translate-x-full" }}
-        >
+        <RoutePage path="/package-json">
           <div className="flex flex-col p-4 bg-bg min-h-screen">
             <SubpageHeader
               title="Project Settings"
@@ -79,9 +75,7 @@ function App() {
           </div>
         </RoutePage>
 
-        <RoutePage path="/scripts"
-        // classNames={{ hidden: "translate-x-full" }}
-        >
+        <RoutePage path="/scripts">
           <div className="flex flex-col p-4 bg-bg min-h-screen">
             <SubpageHeader
               title="Project Scripts"
@@ -91,9 +85,7 @@ function App() {
           </div>
         </RoutePage>
 
-        <RoutePage path="/dependencies"
-        // classNames={{ hidden: "translate-x-full" }}
-        >
+        <RoutePage path="/dependencies">
           <div className="flex flex-col p-4 bg-bg min-h-screen">
             <SubpageHeader
               title="Project Dependencies"
@@ -103,9 +95,7 @@ function App() {
           </div>
         </RoutePage>
 
-        <RoutePage path="/dependencies/add"
-        // classNames={{ hidden: "translate-x-full" }}
-        >
+        <RoutePage path="/dependencies/add">
           <div className="flex flex-col p-4 bg-bg min-h-screen z-10">
             <SubpageHeader
               title="Add Dependency"

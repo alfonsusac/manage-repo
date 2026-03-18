@@ -24,14 +24,14 @@ export async function appServer<
     development: {
       console: true,
     },
-    fetch(req) {
+    async fetch(req) {
       config.logger?.(`Received request for ${ req.url } ${ req.method }`)
       return new Response("Not Found", { status: 404 })
     },
     routes: {
-      "/": (await import(indexPath)).default,
       "/ws": upgradeWsRoute,
-      ...rpc.routeMap,
+      ...rpc.routeMap,  
+      "/*": (await import(indexPath)).default
     },
     websocket: {
       open(ws) {
@@ -84,6 +84,9 @@ async function renderRoot({
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{title}</title>
+        <style>
+          @layer theme, base, components, utilities;
+        </style>
         <link rel="stylesheet" href="../app/styles.css" />
       </head>
       <body>

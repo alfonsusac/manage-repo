@@ -19,7 +19,7 @@ export function RoutePage(props: {
   const isNavingForwardIn = router.meta.direction === "forward" && isCurrentPath
   return <div
     className={cn(
-      "transition-discrete transition-all absolute inset-0 ",
+      "max-sm:transition-discrete transition-all absolute inset-0 ",
       "overflow-x-hidden overflow-y-visible",
       "sm:overflow-visible",
       "duration-300 starting:opacity-0",
@@ -29,10 +29,10 @@ export function RoutePage(props: {
       isCurrentPath
         ? props.classNames?.shown
         : [ props.classNames?.hidden, "hidden" ],
-      isNavingBackwardOut && "translate-x-full",
-      isNavingBackwardIn && "translate-x-0 opacity-100 starting:-translate-x-20",
-      isNavingForwardOut && "-translate-x-20 opacity-0",
-      isNavingForwardIn && "translate-x-0 opacity-100 starting:translate-x-full",
+      isNavingBackwardOut && "max-sm:translate-x-full",
+      isNavingBackwardIn && "max-sm:translate-x-0 opacity-100 max-sm:starting:-translate-x-20",
+      isNavingForwardOut && "max-sm:-translate-x-20 max-sm:opacity-0",
+      isNavingForwardIn && "max-sm:translate-x-0 opacity-100 max-sm:starting:translate-x-full",
     )}
     data-current={isCurrentPath ? "" : undefined}
   >
@@ -43,9 +43,25 @@ export function RoutePage(props: {
 
 
 export function useRouter() {
-  const [ router, updateRouter ] = useQuery("app_router", () => {
+  const [ router, updateRouter ] = useQuery("app_router", (clean) => {
+    const handlePopState = () => {
+      // what about forward navigation? we can detect it by comparing the new path with the last path in history
+      updateRouter({
+        current: window.location.pathname,
+        history: router.history.slice(0, -1),
+        interruptors: router.interruptors,
+        meta: {
+          direction: null,
+        },
+      })
+    }
+    // what about interrupting navigation? we can add a set of interruptors that can be called before navigating away from the current page, and if any of them returns true, we can prevent navigation
+    window.addEventListener("popstate", handlePopState)
+    clean(() => window.removeEventListener("popstate", handlePopState))
+
     return {
-      current: "/",
+      current: window.location.pathname,
+      // current: "/",
       history: [] as string[],
       interruptors: new Set<() => void>,
       meta: {
@@ -59,6 +75,7 @@ export function useRouter() {
       router.interruptors.forEach(cb => cb())
       return
     }
+    window.history.pushState(null, "", path)
     updateRouter({
       current: path,
       history: [ ...router.history, router.current ],

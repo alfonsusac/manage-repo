@@ -22,7 +22,13 @@ export const InputBlockMessage = (props: ComponentProps<"div">) => <div {...prop
 export const InputDescription = (props: ComponentProps<"div">) => <div {...props} className={cn("text-xs text-fg-4 hover:text-fg-2 px-2", props.className)} />
 export const InputBox = (props: ComponentProps<"div">) => <div {...props} className={cn("input-box gap-1 items-start", props.className)} />
 export const InputBase = (props: ComponentProps<"input">) => <input {...props} className={cn("input w-full text-fg rounded p-1.5 px-2 font-mono text-sm outline-none placeholder:text-fg-4 h-8", props.className)} />
-export const InputButton = (props: ComponentProps<"button">) => <button {...props} className={cn("input-button button ghost text-start hover:bg-bg-3/50 flex items-center gap-1 px-1.5 py-1.5 grow shrink-0", props.className)} />
+export const InputButton = (props: ComponentProps<"button">) => {
+  // return <button className="input-button button ghost hover:bg-bg-3/50">ASD</button>
+  return <button
+    {...props}
+    className={cn("input-button button ghost text-start hover:bg-bg-3/50 flex items-center gap-1 px-1.5 py-1.5 grow shrink-0", props.className)}
+  />
+}
 export const InputStartIcon = (props: ComponentProps<"div">) => <div {...props} className={cn("text-fg-4 shrink-0 w-4.5 ml-1 h-8 ml-1", props.className)} />
 export const ErrorMessage = ({ error, ...props }: { error: any } & ComponentProps<"div">) => typeof error !== "string" ? null : <div {...props} className={cn("text-error", props.className)}>{error}</div>
 export const WarnMessages = (props: { warns: string[] }) => <div className="text-warning/25">{props.warns.map((warn, i) => <div key={i}>{warn}</div>)}</div>

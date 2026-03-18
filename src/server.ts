@@ -53,7 +53,7 @@ export async function startManager(props: {
 
   return server
 
-} 
+}
 
 export type ManagerServer = Awaited<ReturnType<typeof startManager>>
 export type ManagerServerEvents = ManagerServer[ '_$serverEvents' ]
