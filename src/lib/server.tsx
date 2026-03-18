@@ -1,7 +1,7 @@
 import { $, type MaybePromise } from "bun"
 import { RPCFetchHandlers, ServerEventPublisher, type EventMap } from "./ws-core"
 import { renderToString } from "react-dom/server"
-import path from "path"
+import path, { resolve } from "path"
 // import index from "../app/index.html"
 // import index from "../index.html"
 
@@ -27,7 +27,8 @@ export async function appServer<
   // await renderRoot({ routeName: '/index.html', title: "Fullstack Bun App", })
 
   // Compiling tailwind
-  await $`tailwindcss -i ./src/app/styles.css -o ./src/app/output.css`
+  console.log("input styles dir", resolve(import.meta.dir, '..', 'app', 'styles.css'))
+  await $`tailwindcss -i ${ resolve(import.meta.dir, '..', 'app', 'styles.css') } -o ${ resolve(import.meta.dir, '..', 'app', 'output.css') }`
 
   // Start the server
   config.logger?.("Starting server...")

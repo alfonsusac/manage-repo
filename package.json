@@ -1,7 +1,7 @@
 {
   "name": "manage-repo",
   "description": "A tool to manage your repositories",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
