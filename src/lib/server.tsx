@@ -2,8 +2,14 @@ import type { MaybePromise } from "bun"
 import { RPCFetchHandlers, ServerEventPublisher, type EventMap } from "./ws-core"
 import { renderToString } from "react-dom/server"
 import path from "path"
+import index from "../app/index.html"
 
-const indexPath = path.join(import.meta.dir, '..', 'app/index.html')
+// const indexPath = path.join(import.meta.dir, '..', 'app/index.html')
+// const indexPath = process.env.NODE_ENV === "production"
+//   ? path.join(process.cwd() + './dist/index.html')
+//   : path.join(import.meta.dir, '..', 'app/index.html')
+
+// console.log("indexPath:", indexPath)
 
 export async function appServer<
   M extends Record<string, (...args: any) => MaybePromise<any>>,
@@ -16,7 +22,7 @@ export async function appServer<
 }) {
   // Prerequisites
   const rpc = RPCFetchHandlers({ methods: config.methods ?? {} })
-  await renderRoot({ routeName: '/index.html', title: "Fullstack Bun App", })
+  // await renderRoot({ routeName: '/index.html', title: "Fullstack Bun App", })
 
   // Start the server
   config.logger?.("Starting server...")
@@ -30,8 +36,8 @@ export async function appServer<
     },
     routes: {
       "/ws": upgradeWsRoute,
-      ...rpc.routeMap,  
-      "/*": (await import(indexPath)).default
+      ...rpc.routeMap,
+      "/*": index
     },
     websocket: {
       open(ws) {
@@ -66,37 +72,37 @@ export async function appServer<
 
 
 
-async function renderRoot({
-  routeName = '/index.html',
-  title = "Fullstack Bun App",
-  payload = {},
-}: {
-  routeName: string,
-  title: string,
-  payload?: any,
-}) {
-  // const htmlpath = path.join(indexPath + routeName)
+// async function renderRoot({
+//   routeName = '/index.html',
+//   title = "Fullstack Bun App",
+//   payload = {},
+// }: {
+//   routeName: string,
+//   title: string,
+//   payload?: any,
+// }) {
+//   // const htmlpath = path.join(indexPath + routeName)
 
-  // Generate the HTML file with the React app rendered on the server
-  await Bun.write(indexPath, "<!-- This file is generated from Server.tsx -->\n" + renderToString(
-    <html>
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>{title}</title>
-        <style>
-          @layer theme, base, components, utilities;
-        </style>
-        <link rel="stylesheet" href="../app/styles.css" />
-      </head>
-      <body>
-        <div id="root"></div>
-        <div id="payload" data-payload={JSON.stringify(payload)}></div>
-        <script type="module" src="../app/Root.tsx"></script>
-      </body>
-    </html>
-  ))
-}
+//   // Generate the HTML file with the React app rendered on the server
+//   await Bun.write(indexPath, "<!-- This file is generated from Server.tsx -->\n" + renderToString(
+//     <html>
+//       <head>
+//         <meta charSet="utf-8" />
+//         <meta name="viewport" content="width=device-width, initial-scale=1" />
+//         <title>{title}</title>
+//         <style>
+//           @layer theme, base, components, utilities;
+//         </style>
+//         <link rel="stylesheet" href="../app/styles.css" />
+//       </head>
+//       <body>
+//         <div id="root"></div>
+//         <div id="payload" data-payload={JSON.stringify(payload)}></div>
+//         <script type="module" src="../app/Root.tsx"></script>
+//       </body>
+//     </html>
+//   ))
+// }
 
 function upgradeWsRoute(req: Bun.BunRequest<"/ws">, server: Bun.Server<undefined>) {
   if (server.upgrade(req)) return undefined // upgrade() will handle the response.

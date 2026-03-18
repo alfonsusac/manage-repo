@@ -16,15 +16,16 @@ export async function startManager(props: {
 }) {
   // Host current cwd
   const cwd = process.cwd()
+
   console.log(`   - Starting Manager on ${ props.host }:${ props.port }...`)
 
   const publisher = ServerEventPublisher("global",
     // (payload) => { log("Publishing global event:", [ payload.evName ]) }
   )
-  const dataCache = DataCache('./manager/cache.json', { expiry: "5m" })
+  const dataCache = DataCache('./.data/cache.json', { expiry: "5m" })
   await dataCache.initialize()
   const packageJson = await PackageJson(publisher.publish, dataCache)
-  const userSettings = await UserSettings(publisher.publish)
+  const userSettings = await UserSettings(publisher.publish, './.data/settings.json')
   const pinger = Pinger(publisher.publish)
 
   const server = await appServer({

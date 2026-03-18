@@ -93,6 +93,9 @@ process.on("SIGTERM", cleanup) // Kill command
 // 3. select file to publish 
 //    "files": ["dist"]
 
-// console.log("__dirname", __dirname)               --> The "baked" directory of the src files at build time. (my directory is now exposed to other people who install the package, which is not what we want for --showdir)
-// console.log("import.meta.dir", import.meta.dir)   --> The actual directory of where the /dist file is installed
-// console.log("process.cwd()", process.cwd())       --> The actual directory of where the command is run from (which is what we want for --showdir)
+// console.log("__dirname", __dirname)                       // --> The "baked" directory of the src files at build time. (my directory is now exposed to other people who install the package, which is not what we want for --showdir)
+// console.log("import.meta.dir", import.meta.dir)           // --> The actual directory of where the /dist file is installed (will be undefined on build.)
+// console.log("import.meta.path", import.meta.path)         // --> The actual directory of where the /dist file is installed (will be undefined on build.)
+// console.log("import.meta.dirname", import.meta.dirname)   // --> The actual directory of where the /dist file is installed (will be undefined on build.)
+// console.log("process.cwd()", process.cwd())               // --> The actual directory of where the command is run from (which is what we want for --showdir)
+

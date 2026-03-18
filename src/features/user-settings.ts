@@ -7,9 +7,10 @@ export type UserSettings = {
 }
 
 export async function UserSettings(
-  publisherFn: EventPublisherFn
+  publisherFn: EventPublisherFn,
+  path: `./${ string }`
 ) {
-  const file = JSONFileController<UserSettings>('./manager/settings.json', {
+  const file = JSONFileController<UserSettings>(path, {
     onNotExist: async (file) => {
       const defaultSettings: UserSettings = {
         checkProjectNameOnNPM: false,
