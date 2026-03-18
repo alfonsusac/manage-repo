@@ -1,7 +1,7 @@
 {
   "name": "manage-repo",
   "description": "A tool to manage your repositories",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
@@ -32,6 +32,7 @@
     "manage-repo": "./src/cmd.ts"
   },
   "files": [
-    "src"
+    "src",
+    "bunfig.toml"
   ]
 }
