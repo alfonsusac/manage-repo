@@ -21,13 +21,21 @@ const result = await build({
   entrypoints: [ "./src/cmd.ts" ],
   outdir: "dist",
   plugins: [ plugin ],
-  minify: true,
+  // minify: true,
   target: "bun",
+  // format: "cjs",
   format: "esm",
-  bytecode: true,
-  compile: {
-    outfile: "manage_repo",
-  },
+  splitting: false,
+  // naming: {
+  //   chunk: "dist/[name]-[hash].js",
+  // },
+  // sourcemap: true,
+  // naming: "dist/[dir]/[name].[ext]",
+  // naming: "[dist]/",
+  // bytecode: true,
+  // compile: {
+  //   outfile: "manage_repo",
+  // },
   define: {
     "process.env.NODE_ENV": JSON.stringify("production"),
   },

@@ -13,13 +13,15 @@
   "scripts": {
     "build": "bun scripts/build.ts",
     "prepublishOnly": "bun scripts/publish.ts",
+    "postpublish": "bun scripts/postpublish.ts",
     "dev": "bun --watch src/cmd.ts",
     "version": "bun scripts/version.ts",
-    "start": "bun run build && dist/manage_repo"
+    "start": "bun run build && bun --cwd dist cmd.js "
   },
   "dependencies": {
     "@types/node": "^25.5.0",
     "@types/react-dom": "^19.2.3",
+    "bun": "^1.3.11",
     "bun-plugin-tailwind": "^0.1.2",
     "commander": "^14.0.3",
     "lazy-cn": "^1.0.0",

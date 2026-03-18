@@ -4,6 +4,7 @@ import { PackageJson } from "./features/package-json"
 import { UserSettings } from "./features/user-settings"
 import { Pinger } from "./features/pinger"
 import { DataCache } from "./lib/lib-cache"
+import index from "./index.html"
 
 
 export function log(...args: any[]) {
@@ -16,7 +17,7 @@ export async function startManager(props: {
 }) {
   // Host current cwd
   const cwd = process.cwd()
-
+  console.log("CWD:", cwd)
   console.log(`   - Starting Manager on ${ props.host }:${ props.port }...`)
 
   const publisher = ServerEventPublisher("global",
@@ -24,7 +25,7 @@ export async function startManager(props: {
   )
   const dataCache = DataCache('./.data/cache.json', { expiry: "5m" })
   await dataCache.initialize()
-  const packageJson = await PackageJson(publisher.publish, dataCache)
+  const packageJson = await PackageJson(publisher.publish, dataCache, './package.json')
   const userSettings = await UserSettings(publisher.publish, './.data/settings.json')
   const pinger = Pinger(publisher.publish)
 
@@ -41,7 +42,8 @@ export async function startManager(props: {
       ...userSettings.events,
       ...pinger.events
     },
-    logger: log
+    logger: log,
+    indexHtml: index
   })
 
   publisher.initialize(server.server)

@@ -2,7 +2,8 @@ import type { MaybePromise } from "bun"
 import { RPCFetchHandlers, ServerEventPublisher, type EventMap } from "./ws-core"
 import { renderToString } from "react-dom/server"
 import path from "path"
-import index from "../app/index.html"
+// import index from "../app/index.html"
+// import index from "../index.html"
 
 // const indexPath = path.join(import.meta.dir, '..', 'app/index.html')
 // const indexPath = process.env.NODE_ENV === "production"
@@ -19,6 +20,7 @@ export async function appServer<
   methods?: M,
   events?: E,
   logger?: (...args: any[]) => void,
+  indexHtml: Bun.HTMLBundle,
 }) {
   // Prerequisites
   const rpc = RPCFetchHandlers({ methods: config.methods ?? {} })
@@ -37,7 +39,8 @@ export async function appServer<
     routes: {
       "/ws": upgradeWsRoute,
       ...rpc.routeMap,
-      "/*": index
+      // "/*": index
+      "/*": config.indexHtml
     },
     websocket: {
       open(ws) {

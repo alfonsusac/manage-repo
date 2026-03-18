@@ -46,9 +46,10 @@ export type PackageJson = {
 
 export async function PackageJson(
   publisherFn: EventPublisherFn,
-  dataCache: DataCacheType
+  dataCache: DataCacheType,
+  path: `./${ string }`,
 ) {
-  const file = JSONFileController<PackageJson>('./package.json')
+  const file = JSONFileController<PackageJson>(path)
   const publisher = EventEmitter<{
     'package-json-updated': PackageJson
   }>(publisherFn)
