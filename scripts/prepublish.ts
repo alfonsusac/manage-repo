@@ -11,7 +11,7 @@
 //10. tag the current commit with the new version and push the tag to remote
 
 import { $ } from "bun"
-import { logger, type ChangelogFile } from "./util"
+import { logger, warn, type ChangelogFile } from "./util"
 
 const skipGitCheck = process.argv.includes("--skip-git-check")
 const log = logger("publish")
@@ -47,7 +47,7 @@ await checkIfNpmIsLoggedOn()
 
 if (errors.length) {
   console.error(`Errors found (${errors.length}):`)
-  errors.forEach((error, index) => console.error(`${index + 1}) ${ error }`))
+  errors.forEach((error, index) => warn(`${index + 1}) ${ error }`))
   console.error("Please fix the above errors before publishing.")
   process.exit(1)
 }
