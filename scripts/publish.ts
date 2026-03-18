@@ -29,7 +29,7 @@ log("Preparing to publish ManageRepo...")
 
 // 2. Check if build is working
 log("Building the project...")
-await $`bun run build`
+await $`bun run build`.quiet()
   .catch(error => {
     console.error("Build failed. Please fix build errors before publishing.")
     process.exit(1)
