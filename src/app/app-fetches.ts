@@ -21,7 +21,10 @@ export async function checkNPMName(name: string) {
 
   const json = res.json
   try {
-    return json._id
+    if (json._id === name)
+      return "unavailable"
+    else
+      return "unexpected response data"
   } catch (error) {
     console.error("Error parsing JSON response:", error)
     return "unexpected response data"

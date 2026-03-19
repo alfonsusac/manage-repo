@@ -218,9 +218,8 @@ function ProjectNameInput() {
     if (signal.aborted) return { status: "disabled" as const }
     const res = await checkNPMName(name)
     if (res === "available") return { status: "ok" as const, message: `${ name } is available on npm` }
-    if (res === "exists") return { status: "err" as const, message: `${ name } is already taken on npm` }
+    if (res === "unavailable") return { status: "err" as const, message: `${ name } is already taken on npm` }
     if (res === "fetch error") return { status: "warn" as const, message: `Error checking ${ name } on npm. Unable to fetch.` }
-    if (res === "malformed json") return { status: "warn" as const, message: `Error checking ${ name } on npm. Unable to read json.` }
     if (res === "unexpected response data") return { status: "warn" as const, message: `Error checking ${ name } on npm. Unexpected response data.` }
     if (res === "unexpected server response") return { status: "warn" as const, message: `Error checking ${ name } on npm. Unexpected response.` }
     return { status: "warn" as const, message: `Error checking ${ name } on npm. Unknown error.` }
