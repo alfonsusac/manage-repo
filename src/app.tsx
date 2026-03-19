@@ -9,6 +9,7 @@ import { useAppClient, useWsReady } from "./app/app-client"
 import { AddDependencyPage } from "./app/pages/AddDependency"
 import { MaterialSymbolsPlayArrowRounded } from "./app/app-ui"
 import { Home } from "./app/pages/Home"
+import { ConsoleAppWindow } from "./app/pages/Console"
 
 const qc = newQueryClient()
 import.meta.hot.dispose(() => qc.cleanup())
@@ -51,6 +52,8 @@ function App() {
     <div className="relative h-screen w-screen 
     overflow-x-hidden mx-auto overflow-y-visible
     ">
+      <ConsoleAppWindow />
+
       <div className="max-w-xl w-full mx-auto">
 
         <RoutePage path="/">
@@ -98,6 +101,8 @@ function App() {
             <AddDependencyPage />
           </div>
         </RoutePage>
+
+
 
 
       </div>
