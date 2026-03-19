@@ -1,13 +1,15 @@
 #!/usr/bin/env bun
 
 import { program } from "commander"
-import readline from "readline"
 import { startManager } from "./server"
 import { resolve } from "path"
+import { isPortExist } from "./lib/util-ports"
+import { getErrorCode } from "./lib/util-get-error-message"
+import { warn } from "../scripts/util"
 
 
 // Default configuration values
-const DEFAULT_PORT = 4000
+const DEFAULT_PORT = 3200
 const DEFAULT_HOST = "localhost"
 
 // Read version and description from package.json
@@ -16,6 +18,9 @@ const appName = packageJson.name
 const appVersion = packageJson.version
 const appDescription = packageJson.description
 
+console.log(`\n   ▲ ManageRepo ${ appVersion }`)
+
+// Define CLI options and commands
 program
   .name(appName)
   .version(appVersion)
@@ -48,16 +53,34 @@ if (options.showdir) {
 }
 
 const HOST = options.bind ?? DEFAULT_HOST
-const PORT = options.port ?? DEFAULT_PORT
-
-console.log(`\n   ▲ ManageRepo ${ appVersion }`)
+let PORT = options.port ?? DEFAULT_PORT
 
 
-// Setting up process
-await startManager({
-  host: HOST,
-  port: PORT,
-})
+const runManagerWithPort = async (port: number) => {
+  await startManager({ host: HOST, port })
+}
+
+
+// With port retry
+if (options.port) {
+  // If user specified a bind address, we will not try other ports and just exit if the port is in use
+  try {
+    await runManagerWithPort(PORT)
+  } catch (error) {
+    if (getErrorCode(error) === "EADDRINUSE") {
+      warn(`\n → Port ${ PORT } is already in use. Please choose a different port.\n`)
+      process.exit(1)
+    }
+    throw error
+  }
+} else {
+  // If user did not specify a bind address, we will try the default port and if it's in use, we will try the next port until we find an available one
+  while (await isPortExist(PORT, HOST)) {
+    warn(`\n   → Port ${ PORT } is already in use. Trying port ${ PORT + 1 }...`)
+    PORT++
+  }
+  await runManagerWithPort(PORT)
+}
 
 
 // Graceful shutdown
@@ -68,6 +91,15 @@ const cleanup = () => {
 
 process.on("SIGINT", cleanup) // Ctrl + C
 process.on("SIGTERM", cleanup) // Kill command
+
+
+
+
+
+
+
+
+
 
 // Publishing Preparation:
 // 1. build the thing first

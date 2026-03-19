@@ -27,12 +27,11 @@ export async function UserSettings(config: {
     }
   })
   await file.initialize()
-  file.subscribe(content => emitter(config.publisherFn).publish("user-settings-updated", content))
+  file.subscribe(content => emitter(config.publisherFn).emit("user-settings-updated", content))
 
   const methods = RPCMethods({
     "getUserSettings": async () => { return file.get() },
     "updateUserSettings": async (newData: Partial<UserSettings>) => {
-      console.log("Updating user settings with:", newData)
       const currentData = file.get()
       const updatedData = { ...currentData, ...newData }
       await file.set(updatedData)
@@ -40,7 +39,7 @@ export async function UserSettings(config: {
   })
 
   const onWsOpen: AppServerOnWsOpen = (ws) => {
-    emitter(ws.send).publish('user-settings-updated', file.get())
+    emitter(ws.send).emit('user-settings-updated', file.get())
   }
 
   return {

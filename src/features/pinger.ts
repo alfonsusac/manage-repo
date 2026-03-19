@@ -10,7 +10,7 @@ export function Pinger(
 
   let intervalId: NodeJS.Timeout = null as any
   intervalId = setInterval(() => {
-    emitter(publishFn).publish("ping", "ping " + nanoid(3))
+    emitter(publishFn).emit("ping", "ping " + nanoid(3))
   }, 1000)
   
   return {

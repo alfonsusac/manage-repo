@@ -56,7 +56,7 @@ export async function PackageJson(config: {
 
   const file = JSONFileController<PackageJson>(config.path)
   await file.initialize()
-  file.subscribe(content => emitter(config.publisherFn).publish("package-json-updated", content))
+  file.subscribe(content => emitter(config.publisherFn).emit("package-json-updated", content))
 
   const methods = RPCMethods({
     "getPackageJSON": async () => { return file.get() },
@@ -65,7 +65,7 @@ export async function PackageJson(config: {
   })
 
   const onWsOpen: AppServerOnWsOpen = (ws) => {
-    emitter(ws.send).publish("package-json-updated", file.get())
+    emitter(ws.send).emit("package-json-updated", file.get())
   }
 
   return {

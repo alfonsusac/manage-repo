@@ -62,7 +62,7 @@ export function EventEmitter<
   return {
     emitter: (publisherFn: EventPublisherFn) => {
       return {
-        publish: <N extends keyof P & string>(name: N, data: P[ N ]) => {
+        emit: <N extends keyof P & string>(name: N, data: P[ N ]) => {
           publisherFn(name, data)
         },
       }

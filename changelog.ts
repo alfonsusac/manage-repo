@@ -2,7 +2,12 @@ export const changelog = {
   "0.0.21": {
     "date": "2026-03-19T09:50:06.072Z",
     "changes": [
-      "Improve front-end state management"
+      "Improve front-end state management",
+      "Change default port to 3200",
+      "Add port increment if default port is in use",
+      "Fixed dev being able to run twice on same server without killing the first one",
+      "Improve error message on EADDRINUSE when trying to start dev server on a port that's already in use",
+      "Fix not being able to open on vscode simpleBrowser on prod",
     ]
   },
   "0.0.20": {

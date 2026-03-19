@@ -1,5 +1,5 @@
 import { ServerEventPublisher } from "./lib/ws-core"
-import { appServer, onProcessExit } from "./lib/server"
+import { appServer } from "./lib/server"
 import { PackageJson } from "./features/package-json"
 import { UserSettings } from "./features/user-settings"
 import { Pinger } from "./features/pinger"
@@ -8,6 +8,7 @@ import index from "./index.html"
 
 
 export function log(...args: any[]) {
+  // if (process.env.NODE_ENV === "production") return
   console.log(`\x1b[32mserver\x1b[0m`, ...args)
 }
 
@@ -16,8 +17,6 @@ export async function startManager(props: {
   port: number,
 }) {
   // Host current cwd
-  const cwd = process.cwd()
-  console.log("CWD:", cwd)
   console.log(`   - Starting Manager on ${ props.host }:${ props.port }...`)
 
   const publisher = ServerEventPublisher({
@@ -73,6 +72,10 @@ export async function startManager(props: {
       pinger.cleanup()
     },
   })
+
+  // Host current cwd
+  console.log(`   - Started`)
+
   return app
 }
 
