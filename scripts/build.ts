@@ -18,7 +18,7 @@ if (existsSync(distPath)) {
 
 // Build all the HTML files
 const result = await build({
-  entrypoints: [ "./src/cmd.ts" ],
+  entrypoints: [ "./src/bin.ts" ],
   outdir: "dist",
   plugins: [ plugin ],
   minify: true,
