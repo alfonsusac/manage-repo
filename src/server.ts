@@ -28,9 +28,15 @@ export async function startManager(props: {
     path: `${ import.meta.dir }/.data/cache.json`,
     expiry: "5m",
   })
-
-  const packageJson = await PackageJson(publisher.publish, dataCache, './package.json')
-  const userSettings = await UserSettings(publisher.publish, `${ import.meta.dir }/.data/settings.json`)
+  const userSettings = await UserSettings({
+    publisherFn: publisher.publish,
+    path: `${ import.meta.dir }/.data/settings.json`
+  })
+  const packageJson = await PackageJson({
+    publisherFn: publisher.publish,
+    dataCache,
+    path: './package.json'
+  })
   const pinger = Pinger(publisher.publish)
 
   const app = await appServer({

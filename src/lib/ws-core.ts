@@ -59,15 +59,6 @@ export type EventPublisherFn = (evName: string, ...data: any) => void
 export function EventEmitter<
   P extends { [ E in string ]: any }
 >() {
-
-  const emitter = (publisherFn: EventPublisherFn) => {
-    return {
-      publish: <N extends keyof P & string>(name: N, data: P[ N ]) => {
-        publisherFn(name, data)
-      },
-    }
-  } 
-
   return {
     emitter: (publisherFn: EventPublisherFn) => {
       return {

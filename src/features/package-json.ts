@@ -45,23 +45,23 @@ export type PackageJson = {
 
 
 
-export async function PackageJson(
+export async function PackageJson(config: {
   publisherFn: EventPublisherFn,
   dataCache: DataCacheType,
   path: `./${ string }`,
-) {
+}) {
   const { emitter, events } = EventEmitter<{
     'package-json-updated': PackageJson
   }>()
 
-  const file = JSONFileController<PackageJson>(path)
+  const file = JSONFileController<PackageJson>(config.path)
   await file.initialize()
-  file.subscribe(content => emitter(publisherFn).publish("package-json-updated", content))
+  file.subscribe(content => emitter(config.publisherFn).publish("package-json-updated", content))
 
   const methods = RPCMethods({
     "getPackageJSON": async () => { return file.get() },
     "updatePackageJSON": async (newData: PackageJson) => { await file.set(newData) },
-    "getValidLicenses": getValidLicenses(dataCache),
+    "getValidLicenses": getValidLicenses(config.dataCache),
   })
 
   const onWsOpen: AppServerOnWsOpen = (ws) => {

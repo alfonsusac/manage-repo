@@ -7,16 +7,16 @@ export type UserSettings = {
   route: string
 }
 
-export async function UserSettings(
+export async function UserSettings(config: {
   publisherFn: EventPublisherFn,
   path: string
-) {
+}) {
   type UserSettingsEvents = {
     'user-settings-updated': UserSettings
   }
   const { emitter, events } = EventEmitter<UserSettingsEvents>()
 
-  const file = JSONFileController<UserSettings>(path, {
+  const file = JSONFileController<UserSettings>(config.path, {
     onNotExist: async (file) => {
       const defaultSettings: UserSettings = {
         checkProjectNameOnNPM: false,
@@ -27,7 +27,7 @@ export async function UserSettings(
     }
   })
   await file.initialize()
-  file.subscribe(content => emitter(publisherFn).publish("user-settings-updated", content))
+  file.subscribe(content => emitter(config.publisherFn).publish("user-settings-updated", content))
 
   const methods = RPCMethods({
     "getUserSettings": async () => { return file.get() },
