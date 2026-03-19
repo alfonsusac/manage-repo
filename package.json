@@ -1,16 +1,20 @@
 {
   "name": "manage-repo",
   "description": "A tool to manage your repositories",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "module": "index.ts",
   "type": "module",
+  "engines": {
+    "bun": ">=1.3.0"
+  },
   "scripts": {
     "prepublishOnly": "bun scripts/prepublish.ts",
     "postpublish": "bun scripts/postpublish.ts",
     "dev": "bun --watch src/cmd.ts",
     "version": "bun scripts/version.ts",
     "build": "bun scripts/build.ts",
-    "start": "bun run build && bun dist/cmd.js"
+    "start": "bun run build && bun dist/cmd.js",
+    "postinstall": "bun -e \" \" || echo Bun required! Please install bun via `npm i -g bun` or `pnpm i -g bun`"
   },
   "dependencies": {},
   "devDependencies": {

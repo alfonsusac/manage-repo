@@ -45,14 +45,13 @@ export async function appServer<
         async (req) => {
           try {
             const reqpath = req.url.replace(server.url.toString(), '')
-            const filapath = resolve(import.meta.dir, req.url.replace(server.url.toString(), '') as string)
-            console.log(`path: [${reqpath}][${filapath}]`)
+            const filepath = resolve(import.meta.dir, req.url.replace(server.url.toString(), '') as string)
             if (reqpath === "")
               return new Response(Bun.file(resolve(import.meta.dir, 'index.html')))
-            const staticFile = Bun.file(filapath)
+            const staticFile = Bun.file(filepath)
             if (!await staticFile.exists()) 
               return new Response("Not Found", { status: 404 })
-            return new Response(Bun.file(resolve(import.meta.dir, filapath)))
+            return new Response(Bun.file(resolve(import.meta.dir, filepath)))
           } catch (error) {
             console.error("Error serving static file:", error)
             return new Response("Not Found", { status: 404 })            
