@@ -16,6 +16,22 @@ export function useAppClient() {
   return [ appClient ] as const
 }
 
+export function useWsReady() {
+  const [ appClient ] = useAppClient()
+  const [ ready, setReady ] = useQuery("wsReady_" + !!appClient,
+    (clean) => {
+      if (!appClient) return false
+      clean(
+        appClient.wsevent.subscribe((readyState) => {
+          setReady(readyState === WebSocket.OPEN)
+        })
+      )
+      return appClient?.instance.readyState === WebSocket.OPEN
+    }
+  )
+  return [ ready ]
+}
+
 //------------
 // RPC call helper
 

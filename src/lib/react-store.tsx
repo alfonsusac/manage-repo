@@ -175,10 +175,10 @@ export function useQuery<T, T2 = T>(
     throw new Error(`Data for store ${ key } is required but not available yet.`)
   }
   function update(newData: Updater<Awaited<T>>) {
-    console.log("WRITE using key:", key)
+    // console.log("WRITE using key:", key)
     if (client.storeMap.cleaned()) return
     const store = client.getStore<T>(key)
-    console.log("WRITE GET store for key:", key, !!store)
+    // console.log("WRITE GET store for key:", key, !!store)
     if (!store) throw new Error(`Store with key ${ key } not found. Can't update non-existing store.`)
     const next =
       typeof newData === "function"
