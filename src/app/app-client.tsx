@@ -12,7 +12,7 @@ export type ManagerAppClient = AppClient<ManagerServerEvents>
 
 export function useAppClient() {
   const [ appClient ] = useQuery("appClient", (cleanup) => {
-    const client = createAppClient<ManagerServerEvents>(`ws://localhost:3000/ws`)
+    const client = createAppClient<ManagerServerEvents>(`ws://localhost:5756/ws`)
     cleanup(() => {
       client.cleanup()
     })

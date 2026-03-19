@@ -5,7 +5,7 @@ import { getErrorCode, getErrorMessage } from './util-get-error-message'
 
 
 export function FileController<O>(
-  path: `./${ string }`,
+  path: string,
   reader: (file: Bun.BunFile) => MaybePromise<O>,
   writer: (file: Bun.BunFile, data: O) => MaybePromise<any>,
   watch?: boolean
@@ -22,6 +22,7 @@ export function FileController<O>(
     return store.content
   }
   async function set(newValue: O) {
+    console.log("Setting new value to file:", newValue)
     return await writer(file, newValue)
   }
   async function initialize() {
@@ -52,7 +53,7 @@ export function FileController<O>(
 
 
 export function JSONFileController<JSON>(
-  path: `./${ string }`,
+  path: string,
   options?: {
     onNotExist?: "create" | ((file: Bun.BunFile) => MaybePromise<JSON>)
     watch?: boolean

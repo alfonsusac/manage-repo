@@ -8,7 +8,7 @@ export type UserSettings = {
 
 export async function UserSettings(
   publisherFn: EventPublisherFn,
-  path: `./${ string }`
+  path: string
 ) {
   const file = JSONFileController<UserSettings>(path, {
     onNotExist: async (file) => {
@@ -27,6 +27,7 @@ export async function UserSettings(
   const methods = RPCMethods({
     "getUserSettings": async () => { return file.get() },
     "updateUserSettings": async (newData: Partial<UserSettings>) => {
+      console.log("Updating user settings with:", newData)
       const currentData = file.get()
       const updatedData = { ...currentData, ...newData }
       await file.set(updatedData)

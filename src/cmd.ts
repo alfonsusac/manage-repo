@@ -3,6 +3,7 @@
 import { program } from "commander"
 import readline from "readline"
 import { startManager } from "./server"
+import { resolve } from "path"
 
 
 // Default configuration values
@@ -10,7 +11,7 @@ const DEFAULT_PORT = 5474
 const DEFAULT_HOST = "localhost"
 
 // Read version and description from package.json
-const packageJson = await import("../package.json")
+const packageJson = await Bun.file(resolve(import.meta.dir, '..', 'package.json')).json()
 const appName = packageJson.name
 const appVersion = packageJson.version
 const appDescription = packageJson.description

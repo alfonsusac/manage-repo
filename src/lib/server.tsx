@@ -76,9 +76,8 @@ export async function appServer<
   const routeCount = 2 + Object.keys(rpc.routeMap).length
   const methodCount = Object.keys(config.methods ?? {}).length
   config.logger?.(`Server running at [${ server.url }]`)
-  config.logger?.(`Routes  (${ routeCount }) = /, /ws, ${ Object.keys(rpc.routeMap).join(", ") }`)
-  config.logger?.(`Methods (${ methodCount }) = ${ Object.keys(config.methods ?? {}).map(m => `${ m }`).join(", ") }`)
-  config.logger?.(``)
+  // config.logger?.(`Routes  (${ routeCount }) = /, /ws, ${ Object.keys(rpc.routeMap).join(", ") }`)
+  // config.logger?.(`Methods (${ methodCount }) = ${ Object.keys(config.methods ?? {}).map(m => `${ m }`).join(", ") }`)
 
   return {
     server,

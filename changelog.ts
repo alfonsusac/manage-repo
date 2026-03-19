@@ -1,4 +1,11 @@
 export const changelog = {
+  "0.0.20": {
+    "date": "2026-03-19T03:29:06.309Z",
+    "changes": [
+      "Fixed package.json triggering hmr",
+      "Fixed websocket not working"
+    ]
+  },
   "0.0.19": {
     "date": "2026-03-19T02:33:59.724Z",
     "changes": [

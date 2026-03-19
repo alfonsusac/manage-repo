@@ -5,7 +5,7 @@ import { getErrorMessage } from "./util-get-error-message"
 
 export type DataCacheType = ReturnType<typeof DataCache>
 
-export function DataCache(path: `./${ string }`, opts: { expiry: Duration }) {
+export function DataCache(path: string, opts: { expiry: Duration }) {
 
   const file = JSONFileController<Record<string, { timestamp: number, data: any }>>(path, { onNotExist: "create", watch: false })
 

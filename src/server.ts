@@ -23,10 +23,10 @@ export async function startManager(props: {
   const publisher = ServerEventPublisher("global",
     // (payload) => { log("Publishing global event:", [ payload.evName ]) }
   )
-  const dataCache = DataCache('./.data/cache.json', { expiry: "5m" })
+  const dataCache = DataCache(`${import.meta.dir}/.data/cache.json`, { expiry: "5m" })
   await dataCache.initialize()
   const packageJson = await PackageJson(publisher.publish, dataCache, './package.json')
-  const userSettings = await UserSettings(publisher.publish, './.data/settings.json')
+  const userSettings = await UserSettings(publisher.publish, `${import.meta.dir}/.data/settings.json`)
   const pinger = Pinger(publisher.publish)
 
   const server = await appServer({
