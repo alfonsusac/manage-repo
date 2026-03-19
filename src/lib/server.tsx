@@ -31,7 +31,7 @@ export async function appServer<
   log("Starting server...")
 
   const server = Bun.serve({
-    hostname: config.host,
+    hostname: config.host === "localhost" ? undefined : config.host,
     port: config.port,
     development: {
       console: true,
@@ -80,6 +80,8 @@ export async function appServer<
       message(ws, message) { },
     }
   })
+
+  log("Server started on port", server.url.toString(), server.id)
 
   config.onServe?.(server)
 
