@@ -13,7 +13,7 @@ export function log(...args: any[]) {
 
 export async function startManager(props: {
   host: string,
-  port: string,
+  port: number,
 }) {
   // Host current cwd
   const cwd = process.cwd()
@@ -35,7 +35,11 @@ export async function startManager(props: {
       "getTime": () => new Date().toISOString(),
       "getRandomNumber": (prefix: string, suffix: number) => prefix + Math.random() + suffix,
       ...packageJson.methods,
-      ...userSettings.methods
+      ...userSettings.methods,
+      'info': () => ({
+        port: props.port,
+        url: server.server.url,
+      })
     },
     events: {
       ...packageJson.events,
@@ -43,7 +47,9 @@ export async function startManager(props: {
       ...pinger.events
     },
     logger: log,
-    indexHtml: index
+    indexHtml: index,
+    port: props.port,
+    host: props.host,
   })
 
   publisher.initialize(server.server)

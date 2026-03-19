@@ -45,12 +45,13 @@ const formatFileSize = (bytes: number): string => {
   }
   return `${ size.toFixed(2) } ${ units[ unitIndex ] }`
 }
-// const outputTable = result.outputs.map(output => ({
-//   "File": path.relative(process.cwd(), output.path),
-//   "Type": output.kind,
-//   "Size": formatFileSize(output.size),
-// }))
-// console.table(outputTable)
+const outputTable = result.outputs.map(output => ({
+  "File": path.relative(process.cwd(), output.path),
+  "Type": output.kind,
+  "Size": formatFileSize(output.size),
+}))
+console.table(outputTable)
+console.log("Total size:", formatFileSize(result.outputs.reduce((total, output) => total + output.size, 0)))
 
 const buildTime = (end - start).toFixed(2)
 

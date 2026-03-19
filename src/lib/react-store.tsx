@@ -2,39 +2,43 @@ import { createContext, use, useEffect, useState, useSyncExternalStore } from "r
 import { Listener } from "./util-listener"
 import { nanoid } from "nanoid"
 import type { MaybePromise } from "bun"
+import { getErrorMessage } from "./util-get-error-message"
 
 export type Store<T> = ReturnType<typeof newStore<T>>
 type Initializer<T> = () => T
 
 export function newStore<T>(initialValue: Initializer<T>) {
   const id = nanoid(3)
-  function ECLND() { throw new Error(`Store already cleaned up. Can't operate on store if it is already cleaned up.`) }
+  function ECLND(ctx: string) { throw new Error(`Store already cleaned up. Can't operate on store if it is already cleaned up. [${ ctx }]`) }
   const ref = {
     curr: initialValue(),
     listeners: new Listener<T>,
     cleaned: false,
   }
   function get() {
-    if (ref.cleaned) ECLND()
+    if (ref.cleaned) ECLND('get')
     return ref.curr
   }
   function update(newdata: T) {
-    if (ref.cleaned) ECLND()
+    if (ref.cleaned) ECLND('upd')
     ref.listeners.emit(ref.curr = newdata)
   }
   function subscribe(listener: (data: T) => void) {
-    if (ref.cleaned) ECLND()
+    if (ref.cleaned) ECLND('sub')
     return ref.listeners.subscribe(listener)
   }
   function cleanup() {
-    if (ref.cleaned) ECLND()
+    if (ref.cleaned) ECLND('cln')
     ref.listeners.clear()
     ref.cleaned = true
   }
   function length() {
     return ref.listeners.length()
   }
-  return { update, get, subscribe, cleanup, id, length }
+  function cleaned() {
+    return ref.cleaned
+  }
+  return { update, get, subscribe, cleanup, id, length, cleaned }
 }
 
 
@@ -60,7 +64,7 @@ export function newQueryClient() {
   function registerStore<T>(
     key: string,
     create: (
-      clean: (c: () => void) => void,
+      clean: (c: () => void | undefined) => void,
       update: (newData: T) => void
     ) => MaybePromise<T>,
   ) {
@@ -77,7 +81,13 @@ export function newQueryClient() {
     const store = newStore(() => {
       const res = create(clean, update)
       if (res instanceof Promise) {
-        res.then(data => store.update(data))
+        res.then(data => {
+          if (storeMap.cleaned()) {
+            cleanups.forEach(cleanup => cleanup?.())
+            return
+          }
+          store.update(data)
+        })
         return undefined as unknown as T
       } else {
         return res
@@ -90,7 +100,7 @@ export function newQueryClient() {
   function cleanup() {
     const map = storeMap.get()
     Object.entries(map).forEach(([ key, entry ]) => {
-      entry.cleanups.forEach(cleanup => cleanup())
+      entry.cleanups.forEach(cleanup => cleanup?.())
       entry.store.cleanup()
       delete map[ key ]
     })
@@ -133,14 +143,21 @@ export function useQueryClient() {
   return client
 }
 
+// According to ChatGPT:
+// - useQuery is not the right name for this hook, as it does more than just querying. 
+// A more appropriate name might be useResource or useStore, as it allows both reading
+// and writing to a store, as well as managing its lifecycle.
+// - "given a key, construct or reuse a long-lived, stateful unit with its own 
+// lifecycle and expose it to React" 
+
 export function useQuery<T, T2 = T>(
   key: string,
   create: (
-    clean: (c: () => void) => void,
-    update: (newData: T) => void
-  ) => MaybePromise<T>,
+    clean: (c: () => void | undefined) => void,
+    // update: (newData: T) => void
+  ) => T,
   selector: ((data: T) => T2) = ((data: T) => data as unknown as T2),
-  required?: boolean // will throw error if true and data is not available yet
+  required?: boolean, // will throw error if true and data is not available yet
 ) {
   const client = useQueryClient()
   const data = useSyncExternalStore(
@@ -149,6 +166,7 @@ export function useQuery<T, T2 = T>(
       return store.subscribe(l)
     },
     () => {
+      // console.log("useQuery getter key", key)
       const store = client.registerStore<T>(key, create)
       return selector(store.get())
     }
@@ -156,8 +174,11 @@ export function useQuery<T, T2 = T>(
   if (required && data === undefined) {
     throw new Error(`Data for store ${ key } is required but not available yet.`)
   }
-  function update(newData: Updater<T>) {
+  function update(newData: Updater<Awaited<T>>) {
+    console.log("WRITE using key:", key)
+    if (client.storeMap.cleaned()) return
     const store = client.getStore<T>(key)
+    console.log("WRITE GET store for key:", key, !!store)
     if (!store) throw new Error(`Store with key ${ key } not found. Can't update non-existing store.`)
     const next =
       typeof newData === "function"
@@ -166,7 +187,13 @@ export function useQuery<T, T2 = T>(
     store.update(next)
   }
 
-  return [ data, update ] as [ T2, (newData: T) => void ]
+  const store = client.getStore<T>(key)
+
+  return [ data, update, store ] as [
+    T2 extends Promise<any> ? Awaited<T2 | undefined> : T2,
+    (newData: Updater<Awaited<T>>) => void,
+    store: Store<T>
+  ]
 }
 
 export type Updater<T> = T | ((prevData: T) => T)

@@ -1,16 +1,6 @@
-import { $, type MaybePromise } from "bun"
+import { type MaybePromise } from "bun"
 import { RPCFetchHandlers, ServerEventPublisher, type EventMap } from "./ws-core"
-import { renderToString } from "react-dom/server"
-import path, { resolve } from "path"
-// import index from "../app/index.html"
-// import index from "../index.html"
-
-// const indexPath = path.join(import.meta.dir, '..', 'app/index.html')
-// const indexPath = process.env.NODE_ENV === "production"
-//   ? path.join(process.cwd() + './dist/index.html')
-//   : path.join(import.meta.dir, '..', 'app/index.html')
-
-// console.log("indexPath:", indexPath)
+import { resolve } from "path"
 
 export async function appServer<
   M extends Record<string, (...args: any) => MaybePromise<any>>,
@@ -21,15 +11,22 @@ export async function appServer<
   events?: E,
   logger?: (...args: any[]) => void,
   indexHtml: Bun.HTMLBundle,
+  port: number,
+  host: string,
 }) {
   // Prerequisites
-  const rpc = RPCFetchHandlers({ methods: config.methods ?? {} })
+  const rpc = RPCFetchHandlers({
+    methods: {
+      ...config.methods,
+    }
+  })
   // await renderRoot({ routeName: '/index.html', title: "Fullstack Bun App", })
 
   // Start the server
   config.logger?.("Starting server...")
   const server = Bun.serve({
-    port: 5756,
+    hostname: config.host,
+    port: config.port,
     development: {
       console: true,
     },
@@ -41,7 +38,7 @@ export async function appServer<
       "/ws": upgradeWsRoute,
       ...rpc.routeMap,
       "/*": process.env.NODE_ENV === "production" ?
-      // refactor later
+        // refactor later
         async (req) => {
           try {
             const reqpath = req.url.replace(server.url.toString(), '')
@@ -49,12 +46,12 @@ export async function appServer<
             if (reqpath === "")
               return new Response(Bun.file(resolve(import.meta.dir, 'index.html')))
             const staticFile = Bun.file(filepath)
-            if (!await staticFile.exists()) 
+            if (!await staticFile.exists())
               return new Response("Not Found", { status: 404 })
             return new Response(Bun.file(resolve(import.meta.dir, filepath)))
           } catch (error) {
             console.error("Error serving static file:", error)
-            return new Response("Not Found", { status: 404 })            
+            return new Response("Not Found", { status: 404 })
           }
         }
         : config.indexHtml

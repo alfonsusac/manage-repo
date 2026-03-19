@@ -5,9 +5,10 @@ import { useQuery } from "../lib/react-store"
 export function usePackageJson(): [ PackageJson, (payload: Partial<PackageJson>) => void ]
 export function usePackageJson(required: false): [ PackageJson | undefined, (payload: Partial<PackageJson>) => void ]
 export function usePackageJson(required: boolean = true) {
-  const client = useAppClient()
-  const [ packageJson, updatePackageJSON ] = useQuery<undefined | PackageJson>(
-    "packageJSON", async (clean) => {
+  const [ client ] = useAppClient()
+  const [ packageJson, updatePackageJSON ] = useQuery(
+    "packageJSON" + !!client, async (clean) => {
+      if (!client) return undefined
       clean(client.subscribe("package-json-updated", data => updatePackageJSON(data)))
       return await call("getPackageJSON")
     }
@@ -18,6 +19,5 @@ export function usePackageJson(required: boolean = true) {
   }
   if (required && !packageJson)
     throw new Error("package.json is required but not available yet.")
-
   return [ packageJson, update ] as const
 }

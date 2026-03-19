@@ -5,6 +5,7 @@ import { ProjectSettings } from "./app/pages/ProjectSettings"
 import { RoutePage, useRouter } from "./app/app-routes"
 import { ProjectScripts } from "./app/pages/ProjectScripts"
 import { DependencyPage } from "./app/pages/Dependency"
+import { useAppClient } from "./app/app-client"
 
 const qc = newQueryClient()
 import.meta.hot.dispose(() => qc.cleanup())
@@ -20,11 +21,17 @@ export function AppRoot() {
 }
 
 function Init(props: { children: React.ReactNode }) {
+  const [ appClient ] = useAppClient()
   const [ packageJson ] = usePackageJson(false)
-  const [ userSettings ] = useUserSettings()
-  if (packageJson === undefined || userSettings === undefined) {
+  const [ userSettings ] = useUserSettings(false)
+  if (appClient === undefined || packageJson === undefined || userSettings === undefined) {
     return <div className="grid place-items-center h-screen w-screen">
-      <div className="text-fg-3">Loading...</div>
+      <div className="grid">
+        <div className="text-fg-3">Loading...</div><br/>
+        <div className="text-fg-3">Client: {!!appClient ? "Ready" : "Not Ready"}</div>
+        <div className="text-fg-3">PackageJSON: {!!packageJson ? "Ready" : "Not Ready"}</div>
+        <div className="text-fg-3">UserSettings: {!!userSettings ? "Ready" : "Not Ready"}</div>
+      </div>
     </div>
   }
   return <>{props.children}</>

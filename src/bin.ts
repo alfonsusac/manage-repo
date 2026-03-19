@@ -7,7 +7,7 @@ import { resolve } from "path"
 
 
 // Default configuration values
-const DEFAULT_PORT = 5474
+const DEFAULT_PORT = 4000
 const DEFAULT_HOST = "localhost"
 
 // Read version and description from package.json
@@ -53,25 +53,10 @@ const PORT = options.port ?? DEFAULT_PORT
 console.log(`\n   ▲ ManageRepo ${ appVersion }`)
 
 
-
-// Setting up IO
-const io = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-})
-
-// Setting up Env
-const env = {
-  HOSTNAME: HOST,
-  PORT: PORT.toString(),
-  DISABLE_ANALYTICS: skipAnalytics ? "true" : undefined,
-  APP_VERSION: appVersion,
-}
-
 // Setting up process
 await startManager({
   host: HOST,
-  port: PORT.toString(),
+  port: PORT,
 })
 
 
