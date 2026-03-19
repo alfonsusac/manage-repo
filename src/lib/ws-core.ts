@@ -20,11 +20,11 @@ export function ServerPublisher<P extends any[]>(
     if (!_server) throw new Error("ServerPublisher is not initialized")
     _server.publish(channel, encoder(...message))
   }
-  function initialize(server: Bun.Server<undefined>) {
+  function setServer(server: Bun.Server<undefined>) {
     if (_server) throw new Error("ServerPublisher is already initialized")
     _server = server
   }
-  return { subscribe, unsubscribe, publish, initialize }
+  return { subscribe, unsubscribe, publish, setServer }
 }
 
 export type ServerPublisher = ReturnType<typeof ServerPublisher>
@@ -41,14 +41,14 @@ export type ServerPublisher = ReturnType<typeof ServerPublisher>
 export type ServerEventPayload = { event: string, data: any }
 export type EventPublisherSchema = { [ E in string ]: (...args: any) => void }
 export type ServerEventPublisher = ReturnType<typeof ServerEventPublisher>
-export function ServerEventPublisher(
+export function ServerEventPublisher(opts: {
   channel: string,
   onPublish?: (payload: { evName: string, data: any }) => any
-) {
+}) {
   return ServerPublisher(
-    channel,
+    opts.channel,
     (evName: string, data: any) => {
-      onPublish?.({ evName, data })
+      opts.onPublish?.({ evName, data })
       return JSON.stringify({ event: evName, data } satisfies ServerEventPayload)
     }
   )
@@ -58,10 +58,23 @@ export type EventMap = { [ E in string ]: any }
 export type EventPublisherFn = (evName: string, ...data: any) => void
 export function EventEmitter<
   P extends { [ E in string ]: any }
->(publisherFn: EventPublisherFn) {
+>() {
+
+  const emitter = (publisherFn: EventPublisherFn) => {
+    return {
+      publish: <N extends keyof P & string>(name: N, data: P[ N ]) => {
+        publisherFn(name, data)
+      },
+    }
+  } 
+
   return {
-    publish: <N extends keyof P & string>(name: N, data: P[ N ]) => {
-      publisherFn(name, data)
+    emitter: (publisherFn: EventPublisherFn) => {
+      return {
+        publish: <N extends keyof P & string>(name: N, data: P[ N ]) => {
+          publisherFn(name, data)
+        },
+      }
     },
     events: {} as P
   }

@@ -20,16 +20,24 @@ export async function startManager(props: {
   console.log("CWD:", cwd)
   console.log(`   - Starting Manager on ${ props.host }:${ props.port }...`)
 
-  const publisher = ServerEventPublisher("global",
-    // (payload) => { log("Publishing global event:", [ payload.evName ]) }
-  )
-  const dataCache = DataCache(`${import.meta.dir}/.data/cache.json`, { expiry: "5m" })
-  await dataCache.initialize()
+  const publisher = ServerEventPublisher({
+    channel: "global",
+    // onPublish: (payload) => log("Publishing global event:", [ payload.evName ])
+  })
+  const dataCache = await DataCache({
+    path: `${ import.meta.dir }/.data/cache.json`,
+    expiry: "5m",
+  })
+
   const packageJson = await PackageJson(publisher.publish, dataCache, './package.json')
-  const userSettings = await UserSettings(publisher.publish, `${import.meta.dir}/.data/settings.json`)
+  const userSettings = await UserSettings(publisher.publish, `${ import.meta.dir }/.data/settings.json`)
   const pinger = Pinger(publisher.publish)
 
-  const server = await appServer({
+  const app = await appServer({
+    logger: log,
+    port: props.port,
+    host: props.host,
+    indexHtml: index,
     publisher,
     methods: {
       "getTime": () => new Date().toISOString(),
@@ -38,7 +46,7 @@ export async function startManager(props: {
       ...userSettings.methods,
       'info': () => ({
         port: props.port,
-        url: server.server.url,
+        url: app.server.url,
       })
     },
     events: {
@@ -46,22 +54,20 @@ export async function startManager(props: {
       ...userSettings.events,
       ...pinger.events
     },
-    logger: log,
-    indexHtml: index,
-    port: props.port,
-    host: props.host,
+    onServe: (server) => {
+      publisher.setServer(server)
+    },
+    onWsOpen: (ws) => {
+      packageJson.onWsOpen?.(ws)
+      userSettings.onWsOpen?.(ws)
+    },
+    onExit: () => {
+      packageJson.cleanup()
+      userSettings.cleanup()
+      pinger.cleanup()
+    },
   })
-
-  publisher.initialize(server.server)
-  onProcessExit(() => {
-    server.server.stop()
-    packageJson.cleanup()
-    userSettings.cleanup()
-    pinger.cleanup()
-  })
-
-  return server
-
+  return app
 }
 
 export type ManagerServer = Awaited<ReturnType<typeof startManager>>

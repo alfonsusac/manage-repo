@@ -4,15 +4,17 @@ import { EventEmitter, type EventPublisherFn } from "../lib/ws-core"
 export function Pinger(
   publishFn: EventPublisherFn
 ) {
-  const publisher = EventEmitter<{
+  const { emitter, events } = EventEmitter<{
     "ping": string,
-  }>(publishFn)
+  }>()
+
   let intervalId: NodeJS.Timeout = null as any
   intervalId = setInterval(() => {
-    publisher.publish("ping", "ping " + nanoid(3))
+    emitter(publishFn).publish("ping", "ping " + nanoid(3))
   }, 1000)
+  
   return {
-    events: publisher.events,
+    events: events,
     cleanup() { clearInterval(intervalId) }
   }
 }

@@ -3,15 +3,12 @@ import { JSONFileController } from "./file-controller"
 import { durationToMs, type Duration } from "./util-duration"
 import { getErrorMessage } from "./util-get-error-message"
 
-export type DataCacheType = ReturnType<typeof DataCache>
+export type DataCacheType = Awaited<ReturnType<typeof DataCache>>
 
-export function DataCache(path: string, opts: { expiry: Duration }) {
+export async function DataCache(opts: { expiry: Duration, path: string }) {
 
-  const file = JSONFileController<Record<string, { timestamp: number, data: any }>>(path, { onNotExist: "create", watch: false })
-
-  async function initialize() {
-    await file.initialize()
-  }
+  const file = JSONFileController<Record<string, { timestamp: number, data: any }>>(opts.path, { onNotExist: "create", watch: false })
+  await file.initialize()
 
   async function get<T>(key: string) {
     const cache = file.get()
@@ -43,6 +40,6 @@ export function DataCache(path: string, opts: { expiry: Duration }) {
     }
   }
 
-  return { get, set, initialize, cache }
+  return { get, set, cache }
 
 }

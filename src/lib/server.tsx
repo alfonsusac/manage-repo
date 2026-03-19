@@ -2,28 +2,34 @@ import { type MaybePromise } from "bun"
 import { RPCFetchHandlers, ServerEventPublisher, type EventMap } from "./ws-core"
 import { resolve } from "path"
 
+
+
 export async function appServer<
   M extends Record<string, (...args: any) => MaybePromise<any>>,
   E extends EventMap,
 >(config: {
+  port: number,
+  host: string,
+  indexHtml: Bun.HTMLBundle,
   publisher: ServerEventPublisher,
+  onServe?: (server: Bun.Server<undefined>) => void,
+  onWsOpen?: (ws: {
+    send: (name: string, payload?: any) => void,
+    instance: Bun.ServerWebSocket<undefined>
+  }) => void,
+  onExit?: () => void,
   methods?: M,
   events?: E,
   logger?: (...args: any[]) => void,
-  indexHtml: Bun.HTMLBundle,
-  port: number,
-  host: string,
 }) {
   // Prerequisites
-  const rpc = RPCFetchHandlers({
-    methods: {
-      ...config.methods,
-    }
-  })
-  // await renderRoot({ routeName: '/index.html', title: "Fullstack Bun App", })
+  const rpc = RPCFetchHandlers({ methods: { ...config.methods } })
+
+  const log = (...args: any[]) => config.logger?.(...args)
 
   // Start the server
-  config.logger?.("Starting server...")
+  log("Starting server...")
+
   const server = Bun.serve({
     hostname: config.host,
     port: config.port,
@@ -31,7 +37,7 @@ export async function appServer<
       console: true,
     },
     async fetch(req) {
-      config.logger?.(`Received request for ${ req.url } ${ req.method }`)
+      log(`Received request for ${ req.url } ${ req.method }`)
       return new Response("Not Found", { status: 404 })
     },
     routes: {
@@ -58,23 +64,37 @@ export async function appServer<
     },
     websocket: {
       open(ws) {
-        config.logger?.("Client connected. Count:", server.pendingWebSockets)
+        log("Client connected. Count:", server.pendingWebSockets)
         config.publisher.subscribe(ws)
+        config.onWsOpen?.({
+          send: (name, payload) => {
+            ws.send(JSON.stringify({ event: name, data: payload }))
+          },
+          instance: ws,
+        })
       },
       close(ws) {
-        config.logger?.("Client disconnected. Count:", server.pendingWebSockets - 1)
+        log("Client disconnected. Count:", server.pendingWebSockets - 1)
         config.publisher.unsubscribe(ws)
       },
       message(ws, message) { },
     }
   })
 
+  config.onServe?.(server)
+
   // Logging
   const routeCount = 2 + Object.keys(rpc.routeMap).length
   const methodCount = Object.keys(config.methods ?? {}).length
-  config.logger?.(`Server running at [${ server.url }]`)
-  // config.logger?.(`Routes  (${ routeCount }) = /, /ws, ${ Object.keys(rpc.routeMap).join(", ") }`)
-  // config.logger?.(`Methods (${ methodCount }) = ${ Object.keys(config.methods ?? {}).map(m => `${ m }`).join(", ") }`)
+  log(`Server running at [${ server.url }]`)
+  // log(`Routes  (${ routeCount }) = /, /ws, ${ Object.keys(rpc.routeMap).join(", ") }`)
+  // log(`Methods (${ methodCount }) = ${ Object.keys(config.methods ?? {}).map(m => `${ m }`).join(", ") }`)
+
+  onProcessExit(() => {
+    log("Shutting down server...")
+    config.onExit?.()
+    server.stop()
+  })
 
   return {
     server,
@@ -83,6 +103,8 @@ export async function appServer<
   }
 }
 
+
+export type AppServerOnWsOpen = NonNullable<Parameters<typeof appServer>[ 0 ]>[ "onWsOpen" ]
 
 
 
@@ -126,8 +148,6 @@ function upgradeWsRoute(req: Bun.BunRequest<"/ws">, server: Bun.Server<undefined
 }
 
 
-
-
 export function onProcessExit(callback: () => void) {
   process.on("exit", callback)
   process.on("SIGINT", () => {
@@ -141,3 +161,6 @@ export function onProcessExit(callback: () => void) {
     process.exit(1)
   })
 }
+
+
+

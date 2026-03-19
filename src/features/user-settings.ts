@@ -1,5 +1,6 @@
 import { EventEmitter, RPCMethods, type EventPublisherFn } from "../lib/ws-core"
 import { JSONFileController } from "../lib/file-controller"
+import type { AppServerOnWsOpen } from "../lib/server"
 
 export type UserSettings = {
   checkProjectNameOnNPM: boolean,
@@ -10,6 +11,11 @@ export async function UserSettings(
   publisherFn: EventPublisherFn,
   path: string
 ) {
+  type UserSettingsEvents = {
+    'user-settings-updated': UserSettings
+  }
+  const { emitter, events } = EventEmitter<UserSettingsEvents>()
+
   const file = JSONFileController<UserSettings>(path, {
     onNotExist: async (file) => {
       const defaultSettings: UserSettings = {
@@ -20,9 +26,8 @@ export async function UserSettings(
       return defaultSettings
     }
   })
-  const publisher = EventEmitter<{
-    'user-settings-updated': UserSettings
-  }>(publisherFn)
+  await file.initialize()
+  file.subscribe(content => emitter(publisherFn).publish("user-settings-updated", content))
 
   const methods = RPCMethods({
     "getUserSettings": async () => { return file.get() },
@@ -33,11 +38,15 @@ export async function UserSettings(
       await file.set(updatedData)
     }
   })
-  await file.initialize()
-  file.subscribe(content => publisher.publish("user-settings-updated", content))
+
+  const onWsOpen: AppServerOnWsOpen = (ws) => {
+    emitter(ws.send).publish('user-settings-updated', file.get())
+  }
+
   return {
     methods: methods,
-    events: publisher.events,
-    cleanup() { file.cleanup() }
+    events,
+    cleanup() { file.cleanup() },
+    onWsOpen
   }
 }

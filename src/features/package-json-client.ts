@@ -10,7 +10,7 @@ export function usePackageJson(required: boolean = true) {
     "packageJSON" + !!client, async (clean) => {
       if (!client) return undefined
       clean(client.subscribe("package-json-updated", data => updatePackageJSON(data)))
-      return await call("getPackageJSON")
+      return undefined as PackageJson | undefined
     }
   )
   function update(payload: Partial<PackageJson>) {

@@ -2,6 +2,7 @@ import { jsonfetch } from "../lib/lib-fetch"
 import type { DataCacheType } from "../lib/lib-cache"
 import { JSONFileController } from "../lib/file-controller"
 import { EventEmitter, type EventPublisherFn, RPCMethods } from "../lib/ws-core"
+import type { AppServerOnWsOpen } from "../lib/server"
 
 export type PackageJson = {
   name: string,
@@ -49,10 +50,13 @@ export async function PackageJson(
   dataCache: DataCacheType,
   path: `./${ string }`,
 ) {
-  const file = JSONFileController<PackageJson>(path)
-  const publisher = EventEmitter<{
+  const { emitter, events } = EventEmitter<{
     'package-json-updated': PackageJson
-  }>(publisherFn)
+  }>()
+
+  const file = JSONFileController<PackageJson>(path)
+  await file.initialize()
+  file.subscribe(content => emitter(publisherFn).publish("package-json-updated", content))
 
   const methods = RPCMethods({
     "getPackageJSON": async () => { return file.get() },
@@ -60,13 +64,15 @@ export async function PackageJson(
     "getValidLicenses": getValidLicenses(dataCache),
   })
 
-  await file.initialize()
-  file.subscribe(content => publisher.publish("package-json-updated", content))
+  const onWsOpen: AppServerOnWsOpen = (ws) => {
+    emitter(ws.send).publish("package-json-updated", file.get())
+  }
 
   return {
     methods: methods,
-    events: publisher.events,
-    cleanup() { file.cleanup() }
+    events,
+    cleanup() { file.cleanup() },
+    onWsOpen
   }
 }
 

@@ -13,42 +13,61 @@ import type { MaybePromise } from "bun"
 
 export function createAppClient<
   E extends Record<string, any>
->(wsurl: string) {
+>() {
 
   // ws event part
   // const id = Math.random().toString(16).slice(2, 6)
   // console.log("Creating AppClient with wsurl:", wsurl, `[${ id }]`)
-  const ws = new WebSocket(wsurl)
+  let ws: WebSocket | undefined
   const event = new EventListener<{ [ K in keyof E ]: [ data: E[ K ] ] }>()
-  const wsevent = newStore(() => ws.readyState)
+  const wsevent = newStore(() => ws?.readyState)
 
-  ws.onopen = () => {
-    wsevent.update(ws.readyState)
-  }
-  ws.onclose = () => {
-    wsevent.update(ws.readyState)
-  }
-  ws.onmessage = e => {
-    try {
-      const data = JSON.parse(e.data) as ServerEventPayload
-      event.emit(data.event, data.data)
-    } catch (error) {
-      console.error("ws) failed to parse message", getErrorMessage(error))
+  // ws.onopen = () => {
+  //   wsevent.update(ws.readyState)
+  // }
+  // ws.onclose = () => {
+  //   wsevent.update(ws.readyState)
+  // }
+  // ws.onmessage = e => {
+  //   try {
+  //     const data = JSON.parse(e.data) as ServerEventPayload
+  //     event.emit(data.event, data.data)
+  //   } catch (error) {
+  //     console.error("ws) failed to parse message", getErrorMessage(error))
+  //   }
+  // }
+
+  function initialize(wsurl: string) {
+    const _ws = new WebSocket(wsurl)
+    wsevent.update(_ws.readyState)
+    _ws.onopen = () => {
+      wsevent.update(_ws.readyState)
     }
+    _ws.onclose = () => {
+      wsevent.update(_ws.readyState)
+    }
+    _ws.onmessage = e => {
+      try {
+        const data = JSON.parse(e.data) as ServerEventPayload
+        event.emit(data.event, data.data)
+        if ("event" in data === false || "data" in data === false) {
+          console.warn("ws) received message with unexpected format:", data)
+        }
+      } catch (error) {
+        console.error("ws) failed to parse message", getErrorMessage(error))
+      }
+    }
+    ws = _ws
   }
 
 
   function cleanup() {
-    ws.close()
-    ws.onopen = null
-    ws.onclose = null
-    ws.onmessage = null
+    ws && ws.close()
+    ws && (ws.onopen = null)
+    ws && (ws.onclose = null)
+    ws && (ws.onmessage = null)
     event.clear()
     wsevent.cleanup()
-    // Object.entries(storeMap).forEach(([ key, store ]) => {
-    //   store.store.cleanup()
-    //   delete storeMap[ key ]
-    // })
   }
   function subscribe<K extends keyof E>(eventName: K, handler: (data: E[ K ]) => void) {
     const cleanup = event.subscribe(eventName, handler)
@@ -58,40 +77,8 @@ export function createAppClient<
     return event.length(eventName)
   }
 
-  // // store part
-  // const storeMap = {} as Record<string, {
-  //   store: Store<any>,
-  //   // initialPromise: Promise<any> | null
-  // }>
-  // function getStore(key: string) {
-  //   return storeMap[ key ]
-  // }
-  // function createOrRetrieveStore<T>(key: string, initialData: () => MaybePromise<T>) {
-  //   if (getStore(key)) {
-  //     console.warn(`store with key ${ key } already exists. Returning existing store.`)
-  //     return getStore(key).store as Store<T>
-  //   }
-  //   const newstore = newStore<T | undefined>(() => undefined)
-  //   storeMap[ key ] = {
-  //     store: newstore,
-  //   }
-  //   const _ = (async () => {
-  //     try {
-  //       const data = await initialData()
-  //       newstore.update(data)
-  //     } catch (error) {
-  //       console.error(`Failed to get initial data for store ${ key }:`, getErrorMessage(error))
-  //     }
-  //   })()
-
-  //   return storeMap[ key ].store as Store<T | undefined>
-  // }
-
   return {
-    // ws event part
-    cleanup, subscribe, instance: ws, length, wsevent,
-    // store part
-    // storeMap, getStore, createOrRetrieveStore
+    cleanup, subscribe, instance: ws, length, wsevent, initialize,
   }
 }
 

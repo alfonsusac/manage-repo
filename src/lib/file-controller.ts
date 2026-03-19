@@ -22,7 +22,6 @@ export function FileController<O>(
     return store.content
   }
   async function set(newValue: O) {
-    console.log("Setting new value to file:", newValue)
     return await writer(file, newValue)
   }
   async function initialize() {
