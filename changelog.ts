@@ -1,4 +1,10 @@
 export const changelog = {
+  "0.0.21": {
+    "date": "2026-03-19T09:50:06.072Z",
+    "changes": [
+      "Improve front-end state management"
+    ]
+  },
   "0.0.20": {
     "date": "2026-03-19T03:29:06.309Z",
     "changes": [
