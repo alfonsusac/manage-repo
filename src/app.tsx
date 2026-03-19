@@ -6,6 +6,9 @@ import { RoutePage, useRouter } from "./app/app-routes"
 import { ProjectScripts } from "./app/pages/ProjectScripts"
 import { DependencyPage } from "./app/pages/Dependency"
 import { useAppClient, useWsReady } from "./app/app-client"
+import { AddDependencyPage } from "./app/pages/AddDependency"
+import { MaterialSymbolsPlayArrowRounded } from "./app/app-ui"
+import { Home } from "./app/pages/Home"
 
 const qc = newQueryClient()
 import.meta.hot.dispose(() => qc.cleanup())
@@ -28,7 +31,7 @@ function Init(props: { children: React.ReactNode }) {
   if (appClient === undefined || packageJson === undefined || userSettings === undefined || !wsReady) {
     return <div className="grid place-items-center h-screen w-screen ">
       <div className="grid w-50 starting:opacity-0 transition-all">
-        <div className="animate-pulse text-fg-3">Loading...</div><br/>
+        <div className="animate-pulse text-fg-3">Loading...</div><br />
         <div className="animate-pulse text-fg-3">Client: {!!appClient ? "Ready" : "Not Ready"}</div>
         <div className="animate-pulse text-fg-3">PackageJSON: {!!packageJson ? "Ready" : "Not Ready"}</div>
         <div className="animate-pulse text-fg-3">UserSettings: {!!userSettings ? "Ready" : "Not Ready"}</div>
@@ -52,25 +55,7 @@ function App() {
 
         <RoutePage path="/">
           <div className="flex flex-col p-4 bg-bg min-h-screen">
-            <header className="gri-d sticky top-0 -mt-4 -mx-4 p-6 bg-bg z-50">
-              <div className="font-semibold text-sm text-fg-3">Package Manager</div>
-              <h1 className="font-mono text-2xl break-all">{packageJson?.name}</h1>
-            </header>
-
-            <div className="-mx-1 bg-bg-2/50 rounded-xl overflow-hidden">
-              <MenuItem
-                title="package.json" description="Edit project settings."
-                onClick={() => router.navigate("/package-json", "forward")}
-              />
-              <MenuItem
-                title="Scripts" description="Edit project scripts."
-                onClick={() => router.navigate("/scripts", "forward")}
-              />
-              <MenuItem
-                title="Dependencies" description="Edit project dependencies."
-                onClick={() => router.navigate("/dependencies", "forward")}
-              />
-            </div>
+            <Home/>
           </div>
         </RoutePage>
 
@@ -110,7 +95,7 @@ function App() {
               title="Add Dependency"
               onBackClick={() => router.navigate("/dependencies", "backward")}
             />
-            EOEOOEEO
+            <AddDependencyPage />
           </div>
         </RoutePage>
 
@@ -136,20 +121,3 @@ function SubpageHeader(props: {
   </header>
 }
 
-function MenuItem(props: {
-  title: React.ReactNode,
-  description?: React.ReactNode,
-  onClick: () => void,
-}) {
-  return <button
-    onClick={props.onClick}
-    className="flex justify-between w-full p-3 px-4 pb-4 hover:bg-bg-2/50 cursor-pointer active:hover:bg-bg-2/75">
-    <div className="flex flex-col gap-0 text-start">
-      <div className="font-medium">{props.title}</div>
-      <div className="text-xs text-fg-3">
-        {props.description}
-      </div>
-    </div>
-    <div>{'→'}</div>
-  </button>
-}

@@ -6,7 +6,7 @@ import { usePackageJson } from "../../features/package-json-client"
 import { packageJsonParser } from "../../features/package-json-validations"
 import { useUserSettings } from "../../features/user-settings-client"
 import { call } from "../app-client"
-import { AddButton, CibGithub, CibKoFi, CibOpenCollective, CibPatreon, CollectionInputItemGroup, ErrorMessage, H2, InputBase, InputBlock, InputBlockFooter, InputBlockMessage, InputButton, InputDescription, Label, LoadingMessage, LucideCheck, LucideExternalLink, LucideLink, LucidePlus, LucideTag, LucideUser, MaterialSymbolsAlternateEmail, MaterialSymbolsLock, MaterialSymbolsPublic, MingcuteAttachmentLine, OcticonRelFilePath16, RadixIconsCross2, SubInput, SuccessMessage, useField, useIndexedReorderDrag, WarnMessages } from "../app-ui"
+import { AddButton, CibGithub, CibKoFi, CibOpenCollective, CibPatreon, CollectionInputItemGroup, ErrorMessage, H2, InputBase, InputBlock, InputBlockFooter, InputBlockMessage, InputButton, InputDescription, Label, LoadingMessage, LucideCheck, LucideExternalLink, LucideLink, LucidePlus, LucideTag, LucideUser, MaterialSymbolsAlternateEmail, MaterialSymbolsLock, MaterialSymbolsPublic, MingcuteAttachmentLine, OcticonRelFilePath16, RadixIconsCross2, SelectInputContainer, SelectInputItem, SelectInputItemDescription, SubInput, SuccessMessage, useField, useIndexedReorderDrag, WarnMessages } from "../app-ui"
 
 export function ProjectSettings() {
 
@@ -923,27 +923,24 @@ function ProjectPrivateInput() {
       label={"Private"}
       description="If true, prevents the package from being accidentally published to the npm registry."
       renderInput={() => {
-        return <div className="flex items-center gap-1 p-1">
+        return <SelectInputContainer>
           {[ false, true ].map((isPrivate, i) => {
             const selected = field.value === isPrivate
             return (
-              <div key={i} className={cn("flex flex-col items-start grow p-2 px-3 cursor-pointer text-fg-3 rounded-sm",
-                selected ? "text-fg-1 bg-bg-3 " : "hover:bg-bg-3/50 hover:text-fg-2",
-                "text-sm"
-              )}
+              <SelectInputItem key={i} selected={selected}
                 onClick={() => field.setValue(isPrivate)}
               >
                 <div className="flex gap-1 items-center">
                   {isPrivate ? <MaterialSymbolsLock /> : <MaterialSymbolsPublic />}
                   {isPrivate ? "Private" : "Public"}
                 </div>
-                <div className="text-xs opacity-80">
+                <SelectInputItemDescription>
                   {isPrivate ? "Can't be published to npm" : "Can be published to npm"}
-                </div>
-              </div>
+                </SelectInputItemDescription>
+              </SelectInputItem>
             )
           })}
-        </div>
+        </SelectInputContainer>
       }}
     />
   )

@@ -47,7 +47,7 @@ export function useRouter() {
     const handlePopState = () => {
       // what about forward navigation? we can detect it by comparing the new path with the last path in history
       updateRouter({
-        current: window.location.pathname,
+        current: window.location.pathname + window.location.search,
         history: router.history.slice(0, -1),
         interruptors: router.interruptors,
         meta: {
@@ -60,7 +60,7 @@ export function useRouter() {
     clean(() => window.removeEventListener("popstate", handlePopState))
 
     return {
-      current: window.location.pathname,
+      current: window.location.pathname + window.location.search,
       // current: "/",
       history: [] as string[],
       interruptors: new Set<() => void>,
@@ -97,6 +97,8 @@ export function useRouter() {
 
   return {
     ...router,
+    pathname: router.current.split('?')[ 0 ],
+    query: Object.fromEntries(new URLSearchParams(router.current.split('?')[ 1 ] || "")),
     navigate,
     addInterruption,
   }

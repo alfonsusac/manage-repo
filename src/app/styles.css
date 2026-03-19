@@ -31,6 +31,9 @@
   --color-success: var(--success);
   --color-error: var(--error);
   --color-warning: var(--warning);
+
+  --breakpoint-xs: 480px;
+  --breakpoint-xxs: 360px;
 }
 
 @layer components {

@@ -1,7 +1,7 @@
 {
   "name": "manage-repo",
   "description": "A tool to manage your repositories",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "module": "index.ts",
   "type": "module",
   "engines": {
