@@ -26,11 +26,6 @@ export async function appServer<
   const rpc = RPCFetchHandlers({ methods: config.methods ?? {} })
   // await renderRoot({ routeName: '/index.html', title: "Fullstack Bun App", })
 
-  // Compiling tailwind
-  // console.log("input styles dir", resolve(import.meta.dir, '..', 'app', 'styles.css'))
-  // await $`tailwindcss -i ${ resolve(import.meta.dir, '..', 'app', 'styles.css') } -o ${ resolve(import.meta.dir, '..', 'app', 'output.css') }`
-
-
   // Start the server
   config.logger?.("Starting server...")
   const server = Bun.serve({
@@ -45,9 +40,9 @@ export async function appServer<
     routes: {
       "/ws": upgradeWsRoute,
       ...rpc.routeMap,
-      "/*": process.env.NODE_ENV ?
+      "/*": process.env.NODE_ENV === "production" ?
+      // refactor later
         async (req) => {
-          // refactor later
           try {
             const reqpath = req.url.replace(server.url.toString(), '')
             const filapath = resolve(import.meta.dir, req.url.replace(server.url.toString(), '') as string)

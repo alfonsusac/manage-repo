@@ -1,4 +1,10 @@
 export const changelog = {
+  "0.0.18": {
+    "date": "2026-03-19T02:15:02.853Z",
+    "changes": [
+      "Fix dependencies by moving deps to devdeps. (by [@riskymh](https://github.com/RiskyMH))"
+    ]
+  },
   "0.0.17": {
     "date": "2026-03-18T18:15:21.627Z",
     "changes": [

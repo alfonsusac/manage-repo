@@ -1,15 +1,9 @@
 {
   "name": "manage-repo",
   "description": "A tool to manage your repositories",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "module": "index.ts",
   "type": "module",
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
   "scripts": {
     "prepublishOnly": "bun scripts/prepublish.ts",
     "postpublish": "bun scripts/postpublish.ts",
@@ -18,7 +12,8 @@
     "build": "bun scripts/build.ts",
     "start": "bun run build && bun dist/cmd.js"
   },
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "@tailwindcss/cli": "^4.2.2",
     "@types/node": "^25.5.0",
     "@types/react-dom": "^19.2.3",
@@ -28,7 +23,11 @@
     "lazy-cn": "^1.0.0",
     "nanoid": "^5.1.7",
     "react-dom": "^19.2.4",
-    "tailwindcss": "^4.2.1"
+    "tailwindcss": "^4.2.1",
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
   },
   "bin": {
     "manage-repo": "./dist/cmd.js"

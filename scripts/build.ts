@@ -25,28 +25,10 @@ const result = await build({
   target: "bun",
   format: "esm",
   splitting: false,
-  
-  // bytecode: true,
-  // compile: {
-  //   outfile: "manage_repo",
-  // },
   define: {
     "process.env.NODE_ENV": JSON.stringify("production"),
   },
 })
-
-// Patch src_default
-// const input = await Bun.file('./dist/cmd.js').text()
-// const output = input
-//   .split('\n')
-//   .map(
-//     line => line.includes("var src_default") ?
-//       line.replaceAll("./", `"+import.meta.dir+"/`)
-//       : line
-//   ).join('\n')
-// await Bun.write('./dist/cmd.js', output)
-
-
 
 
 // Print the results
