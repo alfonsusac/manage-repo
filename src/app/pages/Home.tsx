@@ -1,18 +1,15 @@
 import { usePackageJson } from "../../features/package-json-client"
 import { call } from "../app-client"
 import { useRouter } from "../app-routes"
-import { MaterialSymbolsPlayArrowRounded } from "../app-ui"
+import { LucideArrowUpRight, MaterialSymbolsPlayArrowRounded } from "../app-ui"
 import { useTerminals, useTerminalWindow } from "./Console"
 
 import packageJson from "../../../package.json"
+import { cn } from "lazy-cn"
 
 export function Home() {
 
-  const [ packageJson ] = usePackageJson(false)
   const router = useRouter()
-  const terminal = useTerminals()
-  const terminalWindow = useTerminalWindow()
-
 
   return (
     <>
@@ -22,31 +19,8 @@ export function Home() {
       </header>
       <div className="flex flex-col gap-6">
 
-        <MenuSection title="Scripts">
-          <div className="-mb-2">
-            {packageJson?.scripts ? Object.keys(packageJson.scripts)
-              .filter(script => script.startsWith("pre") || script.startsWith("post") ? false : true)
-              .map(script => {
-                return <div
-                  key={script}
-                  className="button ghost font-mono -mx-4 rounded-lg px-2 py-2 flex items-center gap-2 text-fg hover:bg-bg-2"
-                  onClick={() => {
-                    call("runPackageScript", script, terminal.selected?.id)
-                    terminalWindow.openTerminalWindow()
-                  }}
-                >
-                  <MaterialSymbolsPlayArrowRounded
-                    className="text-fg-4 text-xl"
-                  />
-                  <div>Run {script}</div>
-                </div>
-              }) : <span className="text-sm text-fg-3">No scripts defined.</span>}
-          </div>
-        </MenuSection>
-
-        <MenuSection title="Links">
-
-        </MenuSection>
+        <HomeScriptsSection />
+        <HomeLinksSection />
 
         <div className="-mx-1 bg-bg-2/50 rounded-xl overflow-hidden">
           <MenuItem
@@ -88,19 +62,43 @@ export function Home() {
 function MenuItem(props: {
   title: React.ReactNode,
   description?: React.ReactNode,
-  onClick: () => void,
+  onClick?: () => void,
+  href?: string
 }) {
   return <button
     onClick={props.onClick}
-    className="flex justify-between w-full p-3 px-4 pb-4 hover:bg-bg-2/50 cursor-pointer active:hover:bg-bg-2/75">
+    className="flex justify-between w-full p-3 px-4 pb-3 last:pb-4 first:pt-4 hover:bg-bg-2/50 cursor-pointer active:hover:bg-bg-2/75">
     <div className="flex flex-col gap-0 text-start">
       <div className="font-medium text-fg-2">{props.title}</div>
-      <div className="text-xs text-fg-3">
-        {props.description}
-      </div>
+      {props.description &&
+        <div className="text-xs text-fg-3">
+          {props.description}
+        </div>}
     </div>
     <div className="text-fg-3">{'→'}</div>
   </button>
+}
+
+function MenuItemSmall({ href, ...props }: React.ComponentProps<"div"> & React.ComponentProps<"a"> & {
+  href?: string
+}) {
+  if (href) {
+    return <a
+      href={href}
+      target="_blank"
+      {...props}
+      className={cn("button ghost font-mono rounded-lg px-3 py-2 flex items-center gap-2 text-fg hover:bg-bg-2", props.className)}
+    >
+      {props.children}
+    </a>
+  }
+
+  return <div
+    {...props}
+    className={cn("button ghost font-mono rounded-lg px-3 py-2 flex items-center gap-2 text-fg hover:bg-bg-2", props.className)}
+  >
+    {props.children}
+  </div>
 }
 
 
@@ -111,8 +109,8 @@ function MenuSection(props: {
 
   return (
     <div className="-mx-1 bg-bg-2/50 rounded-xl overflow-hidden">
-      <div className="p-4 flex flex-col gap-2">
-        <h2 className="text-fg-4 text-sm font-medium">{props.title}</h2>
+      <div className="flex flex-col">
+        <h2 className={cn("text-fg-4 text-sm font-medium p-4 pb-2! pl-5!")}>{props.title}</h2>
         {props.children}
       </div>
     </div>
@@ -132,4 +130,67 @@ function InlineLink(props: {
   >
     {props.children}
   </a>
+}
+
+
+function HomeScriptsSection() {
+
+  const terminal = useTerminals()
+  const terminalWindow = useTerminalWindow()
+
+  const scripts = packageJson?.scripts ? Object.keys(packageJson.scripts)
+    .filter(script => script.startsWith("pre") || script.startsWith("post") ? false : true) : []
+
+  if (scripts.length === 0) return null
+
+  return (
+    <MenuSection title="Scripts">
+      <div className="pb-2 px-2">
+        {scripts.map(script => {
+          return <MenuItemSmall onClick={() => {
+            call("runPackageScript", script, terminal.selected?.id)
+            terminalWindow.openTerminalWindow()
+          }}>
+            <MaterialSymbolsPlayArrowRounded
+              className="text-fg-4 text-xl -ml-1"
+            />
+            <div>Run {script}</div>
+          </MenuItemSmall>
+        })}
+      </div>
+    </MenuSection>
+  )
+}
+
+function HomeLinksSection() {
+  const [ packageJson ] = usePackageJson(false)
+
+  const repoitory = packageJson?.repository && typeof packageJson.repository === "object" ? packageJson.repository.url : packageJson?.repository as string | undefined
+  const homepage = packageJson?.homepage
+  const bugs = packageJson?.bugs && typeof packageJson.bugs === "object" ? packageJson.bugs.url : packageJson?.bugs as string | undefined
+  const hasLinks = repoitory || homepage || bugs
+
+  if (!hasLinks) return null
+
+  return (
+    <MenuSection title="Links">
+      <div className="px-2 pb-2">
+        {repoitory &&
+          <MenuItemSmall className="pl-3 text-fg-2" href={repoitory}>
+            Repository <LucideArrowUpRight className="text-fg-4" />
+          </MenuItemSmall>
+        }
+        {homepage &&
+          <MenuItemSmall className="pl-3 text-fg-2" href={homepage}>
+            Homepage <LucideArrowUpRight className="text-fg-4" />
+          </MenuItemSmall>
+        }
+        {bugs &&
+          <MenuItemSmall className="pl-3 text-fg-2" href={bugs}>
+            Bugs <LucideArrowUpRight className="text-fg-4" />
+          </MenuItemSmall>
+        }
+      </div>
+    </MenuSection>
+  )
 }

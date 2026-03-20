@@ -10,7 +10,7 @@
 export function humanDate(date: Date | string) {
   const now = new Date()
   const then = new Date(date)
-  console.log(now, then)
+  // console.log(now, then)
 
   const diff = now.getTime() - then.getTime()
 
