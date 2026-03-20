@@ -2,7 +2,11 @@ export const changelog = {
   "0.0.22": {
     "date": "2026-03-19T13:28:07.764Z",
     "changes": [
-      "Fix npm check fetch malformed message"
+      "Fix npm check fetch malformed message",
+      "Added output log window",
+      "Added non-pre-post script list in home screen",
+      "Added handling for multiple processes",
+      "WIP: Add Dependency",
     ]
   },
 
