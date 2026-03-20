@@ -92,7 +92,7 @@ export function ConsoleAppWindow() {
       const terminalEl = terminalRef.current
       if (!terminalEl) return
       isNearBottomRef.current = terminalEl.scrollHeight - terminalEl.scrollTop - terminalEl.clientHeight < 100
-      if (isNearBottomRef.current) {
+      if (isNearBottomRef.current ) {
         setNewMsgPopup(false)
       }
     }
@@ -293,7 +293,7 @@ function CopyButton(props: {
       })
   }
   const [ copied, setCopied ] = useState(false)
-  return <div className="text-xs p-1 absolute top-2 right-2 button"
+  return <div className="text-xs p-1 absolute top-2 right-2 button z-10"
     onClick={copyToClipboard}
   >
     {copied ? "Copied!" : "Copy"}

@@ -28,7 +28,7 @@ export function Home() {
                 .map(script => {
                   return <div
                     key={script}
-                    className="button ghost font-mono -mx-3 rounded-lg px-3 py-2 flex items-center gap-2 text-fg hover:bg-bg-2"
+                    className="button ghost font-mono -mx-3 rounded-lg px-2 py-2 flex items-center gap-2 text-fg hover:bg-bg-2"
                     onClick={() => {
                       call("runPackageScript", script, terminal.selected?.id)
                       terminalWindow.openTerminalWindow()

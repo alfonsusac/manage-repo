@@ -94,7 +94,7 @@ function App() {
         <RoutePage path="/dependencies/add">
           <div className="flex flex-col p-4 bg-bg min-h-screen z-10">
             <SubpageHeader
-              title="Add Dependency"
+              title="Add Dependency (WIP)"
               onBackClick={() => router.navigate("/dependencies", "backward")}
             />
             <AddDependencyPage />
