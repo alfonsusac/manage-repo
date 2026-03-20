@@ -5,6 +5,7 @@ import { UserSettings } from "./features/user-settings"
 import { Pinger } from "./features/pinger"
 import { DataCache } from "./lib/lib-cache"
 import index from "./index.html"
+import { ClientRunner } from "./features/runner"
 
 
 export function log(...args: any[]) {
@@ -24,17 +25,21 @@ export async function startManager(props: {
     // onPublish: (payload) => log("Publishing global event:", [ payload.evName ])
   })
   const dataCache = await DataCache({
-    path: `${ import.meta.dir }/.data/cache.json`,
     expiry: "5m",
+    path: `${ import.meta.dir }/.data/cache.json`,
+  })
+  const clientRunner = await ClientRunner({
+    publisherFn: publisher.publish,
   })
   const userSettings = await UserSettings({
+    path: `${ import.meta.dir }/.data/settings.json`,
     publisherFn: publisher.publish,
-    path: `${ import.meta.dir }/.data/settings.json`
   })
   const packageJson = await PackageJson({
-    publisherFn: publisher.publish,
     dataCache,
-    path: './package.json'
+    path: './package.json',
+    publisherFn: publisher.publish,
+    commandRunner: clientRunner.runCommand,
   })
   const pinger = Pinger(publisher.publish)
 
@@ -47,6 +52,7 @@ export async function startManager(props: {
     methods: {
       "getTime": () => new Date().toISOString(),
       "getRandomNumber": (prefix: string, suffix: number) => prefix + Math.random() + suffix,
+      ...clientRunner.methods,
       ...packageJson.methods,
       ...userSettings.methods,
       'info': () => ({
@@ -55,9 +61,10 @@ export async function startManager(props: {
       })
     },
     events: {
+      ...clientRunner.events,
       ...packageJson.events,
       ...userSettings.events,
-      ...pinger.events
+      ...pinger.events,
     },
     onServe: (server) => {
       publisher.setServer(server)
@@ -65,8 +72,10 @@ export async function startManager(props: {
     onWsOpen: (ws) => {
       packageJson.onWsOpen?.(ws)
       userSettings.onWsOpen?.(ws)
+      clientRunner.onWsConnect?.(ws)
     },
     onExit: () => {
+      clientRunner.cleanup()
       packageJson.cleanup()
       userSettings.cleanup()
       pinger.cleanup()

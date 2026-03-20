@@ -59,6 +59,8 @@ export function MaterialSymbolsLock(props: SVGProps<SVGSVGElement>) { return (<s
 export function LucideDownload(props: SVGProps<SVGSVGElement>) { return (<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>{/* Icon from Lucide by Lucide Contributors - https://github.com/lucide-icons/lucide/blob/main/LICENSE */}<path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4m4-5l5 5l5-5m-5 5V3" /></svg>) }
 export function MaterialSymbolsPlayArrowRounded(props: SVGProps<SVGSVGElement>) { return (<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>{/* Icon from Material Symbols by Google - https://github.com/google/material-design-icons/blob/master/LICENSE */}<path fill="currentColor" d="M8 17.175V6.825q0-.425.3-.713t.7-.287q.125 0 .263.037t.262.113l8.15 5.175q.225.15.338.375t.112.475t-.112.475t-.338.375l-8.15 5.175q-.125.075-.262.113T9 18.175q-.4 0-.7-.288t-.3-.712" /></svg>) }
 export function LucideChevronDown(props: SVGProps<SVGSVGElement>) {  return (    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>{/* Icon from Lucide by Lucide Contributors - https://github.com/lucide-icons/lucide/blob/main/LICENSE */}<path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m6 9l6 6l6-6" /></svg>  )}
+export function SvgSpinners180RingWithBg(props: SVGProps<SVGSVGElement>) {  return (    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>{/* Icon from SVG Spinners by Utkarsh Verma - https://github.com/n3r4zzurr0/svg-spinners/blob/main/LICENSE */}<path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" /><path fill="currentColor" d="M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z"><animateTransform attributeName="transform" dur="0.75s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12" /></path></svg>  )}
+
 
 export function AddButton(props: {
   label: React.ReactNode,
@@ -409,4 +411,43 @@ export function SelectInputItem({ selected, ...props }: ComponentProps<"div"> & 
 }
 export function SelectInputItemDescription(props: ComponentProps<"div">) {
   return <div {...props} className={cn("text-xs opacity-80", props.className)} />
+}
+
+
+export function Switch(props: {
+  isOn: boolean,
+  onToggle: (newVal: boolean) => void,
+  label: React.ReactNode,
+  classNames?: {
+    root?: string,
+    switch?: string,
+    switchOn?: string,
+    switchOff?: string,
+    thumb?: string,
+    thumbOn?: string,
+    thumbOff?: string,
+    label?: string,
+  }
+}) {
+  return (
+    <div className={cn("flex flex-row gap-2 items-center cursor-pointer group", props.classNames?.root)}
+      onClick={() => props.onToggle(!props.isOn)}
+    >
+      <div className={cn("rounded-full bg-bg-2 p-1 w-8 transition-[background]",
+        props.isOn ? [ "bg-slate-600", props.classNames?.switchOn ] : [ '', props.classNames?.switchOff ],
+        props.classNames?.switch
+      )}>
+        <div className={cn("thumb rounded-full bg-fg-3 w-3 h-3 relative transition-[background,left]",
+          props.isOn ? [ " left-3", props.classNames?.thumbOn ] : [ "left-0", props.classNames?.thumbOff ],
+          props.classNames?.thumb,
+          'bg-slate-400',
+        )} />
+      </div>
+      <div className={cn("text-fg-2 group-hover:text-fg select-none",
+        props.classNames?.label
+      )}>
+        {props.label}
+      </div>
+    </div>
+  )
 }

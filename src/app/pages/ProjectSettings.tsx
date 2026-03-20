@@ -6,7 +6,7 @@ import { usePackageJson } from "../../features/package-json-client"
 import { packageJsonParser } from "../../features/package-json-validations"
 import { useUserSettings } from "../../features/user-settings-client"
 import { call } from "../app-client"
-import { AddButton, CibGithub, CibKoFi, CibOpenCollective, CibPatreon, CollectionInputItemGroup, ErrorMessage, H2, InputBase, InputBlock, InputBlockFooter, InputBlockMessage, InputButton, InputDescription, Label, LoadingMessage, LucideCheck, LucideExternalLink, LucideLink, LucidePlus, LucideTag, LucideUser, MaterialSymbolsAlternateEmail, MaterialSymbolsLock, MaterialSymbolsPublic, MingcuteAttachmentLine, OcticonRelFilePath16, RadixIconsCross2, SelectInputContainer, SelectInputItem, SelectInputItemDescription, SubInput, SuccessMessage, useField, useIndexedReorderDrag, WarnMessages } from "../app-ui"
+import { AddButton, CibGithub, CibKoFi, CibOpenCollective, CibPatreon, CollectionInputItemGroup, ErrorMessage, H2, InputBase, InputBlock, InputBlockFooter, InputBlockMessage, InputButton, InputDescription, Label, LoadingMessage, LucideCheck, LucideExternalLink, LucideLink, LucidePlus, LucideTag, LucideUser, MaterialSymbolsAlternateEmail, MaterialSymbolsLock, MaterialSymbolsPublic, MingcuteAttachmentLine, OcticonRelFilePath16, RadixIconsCross2, SelectInputContainer, SelectInputItem, SelectInputItemDescription, SubInput, SuccessMessage, Switch, useField, useIndexedReorderDrag, WarnMessages } from "../app-ui"
 
 export function ProjectSettings() {
 
@@ -155,43 +155,7 @@ const BasicField = <T, E>({
   </div>
 }
 
-function Switch(props: {
-  isOn: boolean,
-  onToggle: (newVal: boolean) => void,
-  label: React.ReactNode,
-  classNames?: {
-    root?: string,
-    switch?: string,
-    switchOn?: string,
-    switchOff?: string,
-    thumb?: string,
-    thumbOn?: string,
-    thumbOff?: string,
-    label?: string,
-  }
-}) {
-  return (
-    <div className={cn("flex flex-row gap-2 items-center cursor-pointer group", props.classNames?.root)}
-      onClick={() => props.onToggle(!props.isOn)}
-    >
-      <div className={cn("rounded-full bg-bg-2 p-1 w-8 transition-[background]",
-        props.isOn ? [ "bg-slate-600", props.classNames?.switchOn ] : [ '', props.classNames?.switchOff ],
-        props.classNames?.switch
-      )}>
-        <div className={cn("thumb rounded-full bg-fg-3 w-3 h-3 relative transition-[background,left]",
-          props.isOn ? [ " left-3", props.classNames?.thumbOn ] : [ "left-0", props.classNames?.thumbOff ],
-          props.classNames?.thumb,
-          'bg-slate-400',
-        )} />
-      </div>
-      <div className={cn("text-fg-2 group-hover:text-fg select-none",
-        props.classNames?.label
-      )}>
-        {props.label}
-      </div>
-    </div>
-  )
-}
+
 
 
 

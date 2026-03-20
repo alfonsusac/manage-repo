@@ -4,7 +4,8 @@ import type { AppServerOnWsOpen } from "../lib/server"
 
 export type UserSettings = {
   checkProjectNameOnNPM: boolean,
-  route: string
+  route: string,
+  terminalWordWrap?: boolean,
 }
 
 export async function UserSettings(config: {
@@ -20,7 +21,8 @@ export async function UserSettings(config: {
     onNotExist: async (file) => {
       const defaultSettings: UserSettings = {
         checkProjectNameOnNPM: false,
-        route: "/"
+        route: "/",
+        terminalWordWrap: false,
       }
       await file.write(JSON.stringify(defaultSettings, null, 2))
       return defaultSettings

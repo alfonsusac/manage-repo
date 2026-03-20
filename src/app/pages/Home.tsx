@@ -1,11 +1,16 @@
 import { usePackageJson } from "../../features/package-json-client"
+import { call } from "../app-client"
 import { useRouter } from "../app-routes"
 import { MaterialSymbolsPlayArrowRounded } from "../app-ui"
+import { useTerminals, useTerminalWindow } from "./Console"
 
 export function Home() {
 
   const [ packageJson ] = usePackageJson(false)
   const router = useRouter()
+  const terminal = useTerminals()
+  const terminalWindow = useTerminalWindow()
+
 
   return (
     <>
@@ -23,7 +28,12 @@ export function Home() {
                 .map(script => {
                   return <div
                     key={script}
-                    className="button ghost font-mono -mx-3 rounded-lg px-3 py-2 flex items-center gap-2 text-fg hover:bg-bg-2">
+                    className="button ghost font-mono -mx-3 rounded-lg px-3 py-2 flex items-center gap-2 text-fg hover:bg-bg-2"
+                    onClick={() => {
+                      call("runPackageScript", script, terminal.selected?.id)
+                      terminalWindow.openTerminalWindow()
+                    }}
+                  >
                     <MaterialSymbolsPlayArrowRounded
                       className="text-fg-3 text-xl"
                     />

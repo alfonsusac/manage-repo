@@ -3,6 +3,7 @@ import type { DataCacheType } from "../lib/lib-cache"
 import { JSONFileController } from "../lib/file-controller"
 import { EventEmitter, type EventPublisherFn, RPCMethods } from "../lib/ws-core"
 import type { AppServerOnWsOpen } from "../lib/server"
+import type { ClientRunnerCommandRunner } from "./runner"
 
 export type PackageJson = {
   name: string,
@@ -49,6 +50,7 @@ export async function PackageJson(config: {
   publisherFn: EventPublisherFn,
   dataCache: DataCacheType,
   path: `./${ string }`,
+  commandRunner: ClientRunnerCommandRunner,
 }) {
   const { emitter, events } = EventEmitter<{
     'package-json-updated': PackageJson
@@ -62,6 +64,15 @@ export async function PackageJson(config: {
     "getPackageJSON": async () => { return file.get() },
     "updatePackageJSON": async (newData: PackageJson) => { await file.set(newData) },
     "getValidLicenses": getValidLicenses(config.dataCache),
+    "runPackageScript": async (scriptName: string, tabid: string | undefined) => {
+      const packageJson = file.get()
+      if (!packageJson.scripts || !packageJson.scripts[ scriptName ]) {
+        throw new Error(`Script "${ scriptName }" not found in package.json`)
+      }
+      const command = packageJson.scripts[ scriptName ]
+      console.log(`Running script "${ scriptName }": ${ command }`)
+      config.commandRunner(command, tabid)
+    }
   })
 
   const onWsOpen: AppServerOnWsOpen = (ws) => {
@@ -69,7 +80,7 @@ export async function PackageJson(config: {
   }
 
   return {
-    methods: methods,
+    methods,
     events,
     cleanup() { file.cleanup() },
     onWsOpen

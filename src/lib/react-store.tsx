@@ -203,22 +203,4 @@ export function resolveUpdater<T>(updater: Updater<T>, prevData: T): T {
     : updater
 }
 
-export function useWS() {
-  const id = "wss"
-  const [ ws ] = useQuery(id, (clean) => {
-    console.log(`connecting to ${ id }...`)
-    const ws = new WebSocket("ws://localhost:3000/ws")
-    clean(() => {
-      console.log(`closing ${ id }...`)
-      ws.close()
-    })
-    return ws
-  })
-  return ws
-}
-
-export function getHello() {
-  return "hello"
-}
-
-
+export type Selector<T, T2> = (data: T) => T2

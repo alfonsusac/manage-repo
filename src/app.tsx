@@ -7,7 +7,6 @@ import { ProjectScripts } from "./app/pages/ProjectScripts"
 import { DependencyPage } from "./app/pages/Dependency"
 import { useAppClient, useWsReady } from "./app/app-client"
 import { AddDependencyPage } from "./app/pages/AddDependency"
-import { MaterialSymbolsPlayArrowRounded } from "./app/app-ui"
 import { Home } from "./app/pages/Home"
 import { ConsoleAppWindow } from "./app/pages/Console"
 
