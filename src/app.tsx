@@ -9,6 +9,7 @@ import { useAppClient, useWsReady } from "./app/app-client"
 import { AddDependencyPage } from "./app/pages/AddDependency"
 import { Home } from "./app/pages/Home"
 import { ConsoleAppWindow } from "./app/pages/Console"
+import { ManagerChangelogPage } from "./app/pages/Changelog"
 
 const qc = newQueryClient()
 import.meta.hot.dispose(() => qc.cleanup())
@@ -56,49 +57,47 @@ function App() {
       <div className="max-w-xl w-full mx-auto">
 
         <RoutePage path="/">
-          <div className="flex flex-col p-4 bg-bg min-h-screen">
-            <Home/>
-          </div>
+          <Home />
+        </RoutePage>
+
+        <RoutePage path="/_changelog">
+          <SubpageHeader
+            title="Changelog"
+            onBackClick={() => router.navigate("/", "backward")}
+          />
+          <ManagerChangelogPage />
         </RoutePage>
 
         <RoutePage path="/package-json">
-          <div className="flex flex-col p-4 bg-bg min-h-screen">
-            <SubpageHeader
-              title="Project Settings"
-              onBackClick={() => router.navigate("/", "backward")}
-            />
-            <ProjectSettings />
-          </div>
+          <SubpageHeader
+            title="Project Settings"
+            onBackClick={() => router.navigate("/", "backward")}
+          />
+          <ProjectSettings />
         </RoutePage>
 
         <RoutePage path="/scripts">
-          <div className="flex flex-col p-4 bg-bg min-h-screen">
-            <SubpageHeader
-              title="Project Scripts"
-              onBackClick={() => router.navigate("/", "backward")}
-            />
-            <ProjectScripts />
-          </div>
+          <SubpageHeader
+            title="Project Scripts"
+            onBackClick={() => router.navigate("/", "backward")}
+          />
+          <ProjectScripts />
         </RoutePage>
 
         <RoutePage path="/dependencies">
-          <div className="flex flex-col p-4 bg-bg min-h-screen">
-            <SubpageHeader
-              title="Project Dependencies"
-              onBackClick={() => router.navigate("/", "backward")}
-            />
-            <DependencyPage />
-          </div>
+          <SubpageHeader
+            title="Project Dependencies"
+            onBackClick={() => router.navigate("/", "backward")}
+          />
+          <DependencyPage />
         </RoutePage>
 
-        <RoutePage path="/dependencies/add">
-          <div className="flex flex-col p-4 bg-bg min-h-screen z-10">
-            <SubpageHeader
-              title="Add Dependency (WIP)"
-              onBackClick={() => router.navigate("/dependencies", "backward")}
-            />
-            <AddDependencyPage />
-          </div>
+        <RoutePage path="/dependencies/add" className="z-40">
+          <SubpageHeader
+            title="Add Dependency (WIP)"
+            onBackClick={() => router.navigate("/dependencies", "backward")}
+          />
+          <AddDependencyPage />
         </RoutePage>
 
 

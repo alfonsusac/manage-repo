@@ -5,6 +5,7 @@ import { useQuery } from "../lib/react-store"
 export function RoutePage(props: {
   children: React.ReactNode,
   path: `/${ string }`,
+  className?: string,
   classNames?: {
     all?: string,
     shown?: string,
@@ -24,6 +25,7 @@ export function RoutePage(props: {
       "sm:overflow-visible",
       "duration-300 starting:opacity-0",
       "sm:relative",
+      props.className,
       props.classNames?.all,
       isCurrentPath ? "" : "pointer-events-none",
       isCurrentPath
@@ -36,7 +38,9 @@ export function RoutePage(props: {
     )}
     data-current={isCurrentPath ? "" : undefined}
   >
-    {props.children}
+    <div className="flex flex-col p-4 bg-bg min-h-screen pb-40">
+      {props.children}
+    </div>
   </div>
 }
 

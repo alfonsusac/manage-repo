@@ -17,8 +17,7 @@
     "postinstall": "bun -e \" \" || echo Bun required! Please install bun via `npm i -g bun` or `pnpm i -g bun`",
     "script-test": "bun scripts/test-script.ts"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@tailwindcss/cli": "^4.2.2",
     "@types/node": "^25.5.0",
@@ -41,5 +40,16 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "repository": {
+    "url": "https://github.com/alfonsusac/manage-repo",
+    "type": "git"
+  },
+  "bugs": {
+    "url": "https://github.com/alfonsusac/manage-repo/issues"
+  },
+  "author": {
+    "name": "Alfonsus Ardani",
+    "url": "https://alfon.dev"
+  }
 }
