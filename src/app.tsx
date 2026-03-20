@@ -1,4 +1,4 @@
-import { newQueryClient, QueryClientProvider } from "./lib/react-store"
+import { newQueryClient, QueryClientProvider, useQuery } from "./lib/react-store"
 import { usePackageJson } from "./features/package-json-client"
 import { useUserSettings } from "./features/user-settings-client"
 import { ProjectSettings } from "./app/pages/ProjectSettings"
@@ -45,7 +45,6 @@ function Init(props: { children: React.ReactNode }) {
 
 function App() {
 
-  const [ packageJson ] = usePackageJson(false)
   const router = useRouter()
 
   return (
@@ -54,58 +53,38 @@ function App() {
     ">
       <ConsoleAppWindow />
 
-      <div className="max-w-xl w-full mx-auto">
+      <div className="w-full mx-auto">
 
         <RoutePage path="/">
           <Home />
         </RoutePage>
 
-        <RoutePage path="/_changelog">
-          <SubpageHeader
-            title="Changelog"
-            onBackClick={() => router.navigate("/", "backward")}
-          />
+        <RoutePage path="/_changelog" className="max-w-xl mx-auto">
+          <SubpageHeader title="Changelog" onBackClick={() => router.navigate("/", "backward")} />
           <ManagerChangelogPage />
         </RoutePage>
 
-        <RoutePage path="/package-json">
-          <SubpageHeader
-            title="Project Settings"
-            onBackClick={() => router.navigate("/", "backward")}
-          />
+        <RoutePage path="/package-json" className="max-w-xl mx-auto">
+          <SubpageHeader title="Project Settings" onBackClick={() => router.navigate("/", "backward")} />
           <ProjectSettings />
         </RoutePage>
 
-        <RoutePage path="/scripts">
-          <SubpageHeader
-            title="Project Scripts"
-            onBackClick={() => router.navigate("/", "backward")}
-          />
+        <RoutePage path="/scripts" className="max-w-xl mx-auto">
+          <SubpageHeader title="Project Scripts" onBackClick={() => router.navigate("/", "backward")} />
           <ProjectScripts />
         </RoutePage>
 
-        <RoutePage path="/dependencies">
-          <SubpageHeader
-            title="Project Dependencies"
-            onBackClick={() => router.navigate("/", "backward")}
-          />
+        <RoutePage path="/dependencies" className="max-w-xl mx-auto">
+          <SubpageHeader title="Project Dependencies" onBackClick={() => router.navigate("/", "backward")} />
           <DependencyPage />
         </RoutePage>
 
-        <RoutePage path="/dependencies/add" className="z-40">
-          <SubpageHeader
-            title="Add Dependency (WIP)"
-            onBackClick={() => router.navigate("/dependencies", "backward")}
-          />
+        <RoutePage path="/dependencies/add" className="max-w-xl mx-auto">
+          <SubpageHeader title="Add Dependency (WIP)" onBackClick={() => router.navigate("/dependencies", "backward")} />
           <AddDependencyPage />
         </RoutePage>
 
-
-
-
       </div>
-
-
 
     </div>
   )

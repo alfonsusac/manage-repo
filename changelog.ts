@@ -1,4 +1,13 @@
 export const changelog = {
+  "0.0.23": {
+    "date": "2026-03-20T18:15:15.053Z",
+    "changes": [
+      "Added quick links to home page",
+      "Added changelog page of the manager app",
+      "Hide console window when not in use",
+      "Added readme reader in home page"
+    ]
+  },
   "0.0.22": {
     "date": "2026-03-19T13:28:07.764Z",
     "changes": [
@@ -6,10 +15,9 @@ export const changelog = {
       "Added output log window",
       "Added non-pre-post script list in home screen",
       "Added handling for multiple processes",
-      "WIP: Add Dependency",
+      "WIP: Add Dependency"
     ]
   },
-
   "0.0.21": {
     "date": "2026-03-19T09:50:06.072Z",
     "changes": [

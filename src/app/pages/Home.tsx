@@ -1,60 +1,107 @@
 import { usePackageJson } from "../../features/package-json-client"
-import { call } from "../app-client"
+import { call, useAppClient } from "../app-client"
 import { useRouter } from "../app-routes"
 import { LucideArrowUpRight, MaterialSymbolsPlayArrowRounded } from "../app-ui"
 import { useTerminals, useTerminalWindow } from "./Console"
 
 import packageJson from "../../../package.json"
 import { cn } from "lazy-cn"
+import { useQuery } from "../../lib/react-store"
+import Markdown from "react-markdown"
 
 export function Home() {
 
   const router = useRouter()
 
   return (
-    <>
-      <header className="sticky top-0 -mt-4 -mx-4 p-6 pt-12! bg-bg z-50">
-        <div className="font-semibold text-sm text-fg-3">Package Manager</div>
-        <h1 className="font-mono text-2xl break-all">{packageJson?.name}</h1>
-      </header>
-      <div className="flex flex-col gap-6">
+    <div className="">
+      <div className="w-full bg-bg z-50 sticky top-0">
+        <header className="max-w-xs md:max-w-3xl w-full mx-auto  -mt-4 -mx-4 p-6 pt-12! ">
 
-        <HomeScriptsSection />
-        <HomeLinksSection />
+          <div className="font-semibold text-sm text-fg-3">Package Manager</div>
+          <h1 className="font-mono text-2xl break-all">{packageJson?.name}</h1>
+        </header>
+      </div>
+      <div className="flex justify-center gap-8">
 
-        <div className="-mx-1 bg-bg-2/50 rounded-xl overflow-hidden">
-          <MenuItem
-            title="package.json" description="Edit project settings."
-            onClick={() => router.navigate("/package-json", "forward")}
-          />
-          <MenuItem
-            title="Scripts" description="Edit project scripts."
-            onClick={() => router.navigate("/scripts", "forward")}
-          />
-          <MenuItem
-            title="Dependencies" description="Edit project dependencies."
-            onClick={() => router.navigate("/dependencies", "forward")}
-          />
+        {/* Left Part */}
+        <div className="flex flex-col gap-6 max-w-xs w-full">
+
+          <HomeScriptsSection />
+          <HomeLinksSection />
+
+          <div className="-mx-1 bg-bg-2/50 rounded-xl overflow-hidden">
+            <MenuItem
+              title="package.json" description="Edit project settings."
+              onClick={() => router.navigate("/package-json", "forward")}
+            />
+            <MenuItem
+              title="Scripts" description="Edit project scripts."
+              onClick={() => router.navigate("/scripts", "forward")}
+            />
+            <MenuItem
+              title="Dependencies" description="Edit project dependencies."
+              onClick={() => router.navigate("/dependencies", "forward")}
+            />
+          </div>
+
         </div>
 
-        <footer className="flex flex-col gap-2 text-fg-4 text-sm font-mono pt-10">
-          <div>
-            Running on localhost:{window.location.port} - v{packageJson?.version}
+        <div className="hidden md:block! max-w-lg w-full rounded-xl px-4">
+          <h2 className="font-mono text-sm text-fg-4">readme.md</h2>
+          <div className="flex flex-col">
+            <div className="font-mono text-fg-3
+            [&>h1]:mt-6
+            [&>h1]:text-xl
+            [&>h1]:border-b
+            [&>h1]:border-fg-4/50
+            [&>h1]:pb-3
+            [&>h2]:mt-6
+            [&>h2]:text-lg
+            [&>h3]:mt-6
+            [&>h3]:text-base
+            [&>p]:my-4
+            [&>p]:text-sm
+            [&>pre]:my-4
+            [&>pre]:bg-bg-2/50
+            [&>pre]:p-4
+            [&>pre]:rounded-md
+            [&>pre]:px-5
+            [&>pre_code]:px-0
+            [&>pre_code]:bg-none
+            [&>ul]:my-4
+            [&>ul]:list-disc
+            [&>ul]:list-outside
+            [&>ul]:pl-5
+            [&_li]:my-2
+            [&_li]:text-sm
+            [&_code]:bg-bg-2/50
+            [&_code]:px-1
+          ">
+              <PackageReadme />
+            </div>
           </div>
-          <div>
-            <InlineLink
-              onClick={() => router.navigate("/_changelog", "forward")}
-            >changelog</InlineLink>
-            {' - '}
-            <InlineLink href="https://github.com/alfonsusac/manage-repo">github</InlineLink>
-            {' - '}
-            <InlineLink href="https://www.npmjs.com/package/manage-repo">npm</InlineLink>
-            {' - '}
-            <InlineLink href="https://npmx.dev/package/manage-repo">npmx</InlineLink>
-          </div>
-        </footer>
+        </div>
       </div>
-    </>
+
+      <footer className="max-w-xl w-full mx-auto flex flex-col items-center text-center gap-2 text-fg-4 text-sm font-mono pt-10">
+        <div>
+          Running on localhost:{window.location.port} - v{packageJson?.version}
+        </div>
+        <div>
+          <InlineLink
+            onClick={() => router.navigate("/_changelog", "forward")}
+          >changelog</InlineLink>
+          {' - '}
+          <InlineLink href="https://github.com/alfonsusac/manage-repo">github</InlineLink>
+          {' - '}
+          <InlineLink href="https://www.npmjs.com/package/manage-repo">npm</InlineLink>
+          {' - '}
+          <InlineLink href="https://npmx.dev/package/manage-repo">npmx</InlineLink>
+        </div>
+      </footer>
+
+    </div>
   )
 }
 
@@ -193,4 +240,24 @@ function HomeLinksSection() {
       </div>
     </MenuSection>
   )
+}
+
+
+
+
+function PackageReadme() {
+  const [ client ] = useAppClient()
+  const [ readme, setReadme ] = useQuery("app-readme" + !!client, (clean) => {
+    if (!client) return
+    clean(client.subscribe("readme-md-updated", (data) => {
+      setReadme(data)
+    }))
+    return "test" as string
+  })
+
+  console.log(readme)
+
+  return <Markdown>
+    {readme}
+  </Markdown>
 }

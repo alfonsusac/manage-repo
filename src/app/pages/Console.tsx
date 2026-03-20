@@ -124,7 +124,11 @@ export function ConsoleAppWindow() {
     terminalEl.scrollTo({ top: terminalEl.scrollHeight })
   }, [ terminal.selectedIndex, opened ])
 
-  return <div className={cn("fixed bottom-0 left-0 right-0 z-50")}>
+  return <div className={cn(
+    "fixed bottom-0 left-0 right-0 z-50",
+    terminal.list.length === 0 ? "-bottom-14" : "",
+    "transition-all duration-300",
+  )}>
     <div className="console-surface h-full flex flex-col rounded-t-xl bg-bg-3">
       <div className="console-header text-sm text-fg-3 font-medium flex items-center gap-2 hover:text-fg-2 px-3 cursor-pointer"
         onClick={() => setOpened(!opened)}
@@ -138,6 +142,7 @@ export function ConsoleAppWindow() {
             onClick={(e) => {
               e.stopPropagation()
               call("runner:delete-all-tabs")
+              setOpened(false)
             }}
           >
             Clear all

@@ -6,6 +6,7 @@ import { Pinger } from "./features/pinger"
 import { DataCache } from "./lib/lib-cache"
 import index from "./index.html"
 import { ClientRunner } from "./features/runner"
+import { ReadmeMd } from "./features/readme"
 
 
 export function log(...args: any[]) {
@@ -41,6 +42,10 @@ export async function startManager(props: {
     publisherFn: publisher.publish,
     commandRunner: clientRunner.runCommand,
   })
+  const readme = await ReadmeMd({
+    path: './README.md',
+    publisherFn: publisher.publish,
+  })
   const pinger = Pinger(publisher.publish)
 
   const app = await appServer({
@@ -55,6 +60,7 @@ export async function startManager(props: {
       ...clientRunner.methods,
       ...packageJson.methods,
       ...userSettings.methods,
+      ...readme.methods,
       'info': () => ({
         port: props.port,
         url: app.server.url,
@@ -65,6 +71,7 @@ export async function startManager(props: {
       ...packageJson.events,
       ...userSettings.events,
       ...pinger.events,
+      ...readme.events,
     },
     onServe: (server) => {
       publisher.setServer(server)
@@ -73,12 +80,14 @@ export async function startManager(props: {
       packageJson.onWsOpen?.(ws)
       userSettings.onWsOpen?.(ws)
       clientRunner.onWsConnect?.(ws)
+      readme.onWsOpen?.(ws)
     },
     onExit: () => {
       clientRunner.cleanup()
       packageJson.cleanup()
       userSettings.cleanup()
       pinger.cleanup()
+      readme.cleanup()
     },
   })
 

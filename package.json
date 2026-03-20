@@ -1,7 +1,7 @@
 {
   "name": "manage-repo",
   "description": "A tool to manage your repositories",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "module": "index.ts",
   "type": "module",
   "engines": {
@@ -17,7 +17,9 @@
     "postinstall": "bun -e \" \" || echo Bun required! Please install bun via `npm i -g bun` or `pnpm i -g bun`",
     "script-test": "bun scripts/test-script.ts"
   },
-  "dependencies": {},
+  "dependencies": {
+    "react-markdown": "^10.1.0"
+  },
   "devDependencies": {
     "@tailwindcss/cli": "^4.2.2",
     "@types/node": "^25.5.0",

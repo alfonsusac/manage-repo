@@ -4,8 +4,10 @@ import { JSONFileController } from "../lib/file-controller"
 import { EventEmitter, type EventPublisherFn, RPCMethods } from "../lib/ws-core"
 import type { AppServerOnWsOpen } from "../lib/server"
 import type { ClientRunnerCommandRunner } from "./runner"
+import { resolve } from "path"
 
 export type PackageJson = {
+  _path: string,
   name: string,
   version: string,
   description?: string,
@@ -47,9 +49,9 @@ export type PackageJson = {
 
 
 export async function PackageJson(config: {
-  publisherFn: EventPublisherFn,
   dataCache: DataCacheType,
   path: `./${ string }`,
+  publisherFn: EventPublisherFn,
   commandRunner: ClientRunnerCommandRunner,
 }) {
   const { emitter, events } = EventEmitter<{
@@ -58,10 +60,20 @@ export async function PackageJson(config: {
 
   const file = JSONFileController<PackageJson>(config.path)
   await file.initialize()
-  file.subscribe(content => emitter(config.publisherFn).emit("package-json-updated", content))
+  file.subscribe(content => emitter(config.publisherFn).emit("package-json-updated", {
+    ...content,
+    _path: resolve(process.cwd(), config.path)
+  }))
+
+  // console.log('packagejson path', resolve(process.cwd(), config.path))
 
   const methods = RPCMethods({
-    "getPackageJSON": async () => { return file.get() },
+    "getPackageJSON": async () => {
+      return {
+        ...file.get(),
+        _path: resolve(process.cwd(), config.path)
+      }
+    },
     "updatePackageJSON": async (newData: PackageJson) => { await file.set(newData) },
     "getValidLicenses": getValidLicenses(config.dataCache),
     "runPackageScript": async (scriptName: string, tabid: string | undefined) => {
@@ -76,7 +88,10 @@ export async function PackageJson(config: {
   })
 
   const onWsOpen: AppServerOnWsOpen = (ws) => {
-    emitter(ws.send).emit("package-json-updated", file.get())
+    emitter(ws.send).emit("package-json-updated", {
+      ...file.get(),
+      _path: resolve(process.cwd(), config.path)
+    })
   }
 
   return {
