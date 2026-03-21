@@ -116,7 +116,7 @@ function MenuItem(props: {
     onClick={props.onClick}
     className="flex justify-between w-full p-3 px-4 pb-3 last:pb-4 first:pt-4 hover:bg-bg-2/50 cursor-pointer active:hover:bg-bg-2/75">
     <div className="flex flex-col gap-0 text-start">
-      <div className="font-medium text-fg-2">{props.title}</div>
+      <div className="text-fg text-base">{props.title}</div>
       {props.description &&
         <div className="text-xs text-fg-3">
           {props.description}
@@ -223,17 +223,17 @@ function HomeLinksSection() {
     <MenuSection title="Links">
       <div className="px-2 pb-2">
         {repoitory &&
-          <MenuItemSmall className="pl-3 text-fg-2" href={repoitory}>
+          <MenuItemSmall className="pl-3 text-fg" href={repoitory}>
             Repository <LucideArrowUpRight className="text-fg-4" />
           </MenuItemSmall>
         }
         {homepage &&
-          <MenuItemSmall className="pl-3 text-fg-2" href={homepage}>
+          <MenuItemSmall className="pl-3 text-fg" href={homepage}>
             Homepage <LucideArrowUpRight className="text-fg-4" />
           </MenuItemSmall>
         }
         {bugs &&
-          <MenuItemSmall className="pl-3 text-fg-2" href={bugs}>
+          <MenuItemSmall className="pl-3 text-fg" href={bugs}>
             Bugs <LucideArrowUpRight className="text-fg-4" />
           </MenuItemSmall>
         }
