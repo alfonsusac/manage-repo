@@ -16,7 +16,7 @@ import.meta.hot.dispose(() => qc.cleanup())
 
 export function AppRoot() {
   return (
-    <div className="bg-bg text-fg min-w-screen min-h-screen">
+    <div className="min-w-screen min-h-screen">
       <QueryClientProvider qc={qc}>
         <Init><App /></Init>
       </QueryClientProvider>
