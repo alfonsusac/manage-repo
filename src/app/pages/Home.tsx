@@ -1,7 +1,7 @@
 import { usePackageJson } from "../../features/package-json-client"
 import { call, useAppClient } from "../app-client"
 import { useRouter } from "../app-routes"
-import { LucideArrowUpRight, MaterialSymbolsPlayArrowRounded } from "../app-ui"
+import { LucideArrowUpRight, LucideLink, LucideListTree, LucidePackage, LucideTerminal, MaterialSymbolsPlayArrowRounded, MingcuteAttachmentLine } from "../app-ui"
 import { useTerminals, useTerminalWindow } from "./Console"
 
 import packageJson from "../../../package.json"
@@ -34,14 +34,17 @@ export function Home() {
             <MenuItem
               title="package.json" description="Edit project settings."
               onClick={() => router.navigate("/package-json", "forward")}
+              icon={<LucidePackage className="w-full h-full" />}
             />
             <MenuItem
               title="Scripts" description="Edit project scripts."
               onClick={() => router.navigate("/scripts", "forward")}
+              icon={<LucideTerminal className="w-full h-full" />}
             />
             <MenuItem
               title="Dependencies" description="Edit project dependencies."
               onClick={() => router.navigate("/dependencies", "forward")}
+              icon={<LucideListTree className="w-full h-full" />}
             />
           </div>
 
@@ -81,12 +84,17 @@ function MenuItem(props: {
   title: React.ReactNode,
   description?: React.ReactNode,
   onClick?: () => void,
-  href?: string
+  href?: string,
+  icon: React.ReactNode,
 }) {
   return <button
     onClick={props.onClick}
-    className="flex justify-between w-full p-3 px-4 pb-3 hover:bg-bg-2 cursor-pointer active:hover:bg-bg-2 rounded-xl">
-    <div className="flex flex-col gap-0 text-start">
+    className="flex w-full p-3 px-4 pb-3 hover:bg-bg-2 cursor-pointer active:hover:bg-bg-2 rounded-xl">
+    <div className="w-5 h-5 text-fg-3 shrink-0 mt-1 mr-3">
+      {props.icon}
+      {/* <LucidePackage className="w-full h-full" /> */}
+    </div>
+    <div className="flex flex-col gap-0 text-start grow">
       <div className="text-fg text-base">{props.title}</div>
       {props.description &&
         <div className="text-xs text-fg-3 pb-0.5">
@@ -100,19 +108,14 @@ function MenuItem(props: {
 function MenuItemSmall({ href, ...props }: React.ComponentProps<"div"> & React.ComponentProps<"a"> & {
   href?: string
 }) {
-  if (href) {
-    return <a
-      href={href}
-      target="_blank"
-      {...props}
+  if (href)
+    return <a {...props}
+      href={href} target="_blank"
       className={cn("button ghost font-mono rounded-lg px-3 py-2 flex items-center gap-2 text-fg hover:bg-bg-2", props.className)}
     >
       {props.children}
     </a>
-  }
-
-  return <div
-    {...props}
+  return <div {...props}
     className={cn("button ghost font-mono rounded-lg px-3 py-2 flex items-center gap-2 text-fg hover:bg-bg-2", props.className)}
   >
     {props.children}
@@ -123,12 +126,18 @@ function MenuItemSmall({ href, ...props }: React.ComponentProps<"div"> & React.C
 function MenuSection(props: {
   title: React.ReactNode,
   children?: React.ReactNode,
+  // icon: React.ReactNode,
 }) {
 
   return (
     <div className="-mx-1 bg-bg-2/50 rounded-xl overflow-hidden">
       <div className="flex flex-col">
-        <h2 className={cn("text-fg-4 text-sm font-medium p-4 pb-2! pl-5!")}>{props.title}</h2>
+        <h2 className={cn("text-fg-4 text-sm font-medium p-4 pb-2! pl-5! flex")}>
+          {/* <div className="mr-1.5">
+            <LucideLink  className="size-full"/>
+          </div> */}
+          {props.title}
+        </h2>
         {props.children}
       </div>
     </div>
@@ -165,7 +174,7 @@ function HomeScriptsSection() {
     <MenuSection title="Scripts">
       <div className="pb-2 px-2">
         {scripts.map((script, index) => {
-          return <MenuItemSmall key={index}  onClick={() => {
+          return <MenuItemSmall key={index} onClick={() => {
             call("runPackageScript", script, terminal.selected?.id)
             terminalWindow.openTerminalWindow()
           }}>
