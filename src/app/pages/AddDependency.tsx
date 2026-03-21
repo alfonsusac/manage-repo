@@ -5,7 +5,7 @@ import { searchNPMPackage } from "../app-fetches"
 import { useRouter } from "../app-routes"
 import { CloseButton, InputBase, InputBlock, InputDescription, Label, LucideDownload, SelectInputContainer, SelectInputItem, SelectInputItemDescription, useField } from "../app-ui"
 import { useDependencies } from "./Dependency"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 
 type DependencyInput = {
@@ -29,12 +29,20 @@ export function AddDependencyPage() {
   const dep = useDependencies()
 
   const field = useField({
-    dependencyType: isValidDependencyType(router.query.from) ? router.query.from : "dependencies",
+    dependencyType: "dependencies",
     sourceType: "npm",
     packageNames: [],
   } as DependencyInput, {
     validate: () => { },
   })
+
+  // If the user is coming from a link with a ?from= query parameter, preselect the corresponding dependency type
+  //  but only switch when user is entering the page, not when theyre navigating away. 
+  useEffect(() => {
+    if (!router.query.from) return
+    if (isValidDependencyType(router.query.from)) 
+      field.setValue({ ...field.value, dependencyType: router.query.from })
+  }, [ router.query.from ])
 
   return (
     <div className="flex flex-col gap-7 py-4 pb-20">
@@ -86,6 +94,7 @@ export function AddDependencyPage() {
             ] as const).map(type => {
               return (
                 <SelectInputItem
+                  key={type}
                   className="grow w-full"
                   selected={field.value.sourceType === type}
                   onClick={() => field.setValue(

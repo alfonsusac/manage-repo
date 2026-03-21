@@ -30,7 +30,7 @@ export function Home() {
           <HomeScriptsSection />
           <HomeLinksSection />
 
-          <div className="-mx-1 bg-bg-2/50 rounded-xl overflow-hidden">
+          <div className="-mx-1 bg-bg-2/50 rounded-xl overflow-hidden p-2">
             <MenuItem
               title="package.json" description="Edit project settings."
               onClick={() => router.navigate("/package-json", "forward")}
@@ -50,36 +50,7 @@ export function Home() {
         <div className="hidden md:block! max-w-lg w-full rounded-xl px-4">
           <h2 className="font-mono text-sm text-fg-4">readme.md</h2>
           <div className="flex flex-col">
-            <div className="font-mono text-fg-3
-            [&>h1]:mt-6
-            [&>h1]:text-xl
-            [&>h1]:border-b
-            [&>h1]:border-fg-4/50
-            [&>h1]:pb-3
-            [&>h2]:mt-6
-            [&>h2]:text-lg
-            [&>h3]:mt-6
-            [&>h3]:text-base
-            [&>p]:my-4
-            [&>p]:text-sm
-            [&>pre]:my-4
-            [&>pre]:bg-bg-2/50
-            [&>pre]:p-4
-            [&>pre]:rounded-md
-            [&>pre]:px-5
-            [&>pre_code]:px-0
-            [&>pre_code]:bg-none
-            [&>ul]:my-4
-            [&>ul]:list-disc
-            [&>ul]:list-outside
-            [&>ul]:pl-5
-            [&_li]:my-2
-            [&_li]:text-sm
-            [&_code]:bg-bg-2/50
-            [&_code]:px-1
-          ">
-              <PackageReadme />
-            </div>
+            <PackageReadme />
           </div>
         </div>
       </div>
@@ -114,11 +85,11 @@ function MenuItem(props: {
 }) {
   return <button
     onClick={props.onClick}
-    className="flex justify-between w-full p-3 px-4 pb-3 last:pb-4 first:pt-4 hover:bg-bg-2/50 cursor-pointer active:hover:bg-bg-2/75">
+    className="flex justify-between w-full p-3 px-4 pb-3 hover:bg-bg-2 cursor-pointer active:hover:bg-bg-2 rounded-xl">
     <div className="flex flex-col gap-0 text-start">
       <div className="text-fg text-base">{props.title}</div>
       {props.description &&
-        <div className="text-xs text-fg-3">
+        <div className="text-xs text-fg-3 pb-0.5">
           {props.description}
         </div>}
     </div>
@@ -193,8 +164,8 @@ function HomeScriptsSection() {
   return (
     <MenuSection title="Scripts">
       <div className="pb-2 px-2">
-        {scripts.map(script => {
-          return <MenuItemSmall onClick={() => {
+        {scripts.map((script, index) => {
+          return <MenuItemSmall key={index}  onClick={() => {
             call("runPackageScript", script, terminal.selected?.id)
             terminalWindow.openTerminalWindow()
           }}>
@@ -255,9 +226,35 @@ function PackageReadme() {
     return "test" as string
   })
 
-  console.log(readme)
-
-  return <Markdown>
-    {readme}
-  </Markdown>
+  return <div className="font-mono text-fg-3
+      [&>h1]:mt-6
+      [&>h1]:text-xl
+      [&>h1]:border-b
+      [&>h1]:border-fg-4/50
+      [&>h1]:pb-3
+      [&>h2]:mt-6
+      [&>h2]:text-lg
+      [&>h3]:mt-6
+      [&>h3]:text-base
+      [&>p]:my-4
+      [&>p]:text-sm
+      [&>pre]:my-4
+      [&>pre]:bg-bg-2/50
+      [&>pre]:p-4
+      [&>pre]:rounded-md
+      [&>pre]:px-5
+      [&>pre_code]:px-0
+      [&>pre_code]:bg-none
+      [&>ul]:my-4
+      [&>ul]:list-disc
+      [&>ul]:list-outside
+      [&>ul]:pl-5
+      [&_li]:my-2
+      [&_li]:text-sm
+      [&_code]:bg-bg-2/50
+      [&_code]:px-1">
+    <Markdown>
+      {readme}
+    </Markdown>
+  </div>
 }

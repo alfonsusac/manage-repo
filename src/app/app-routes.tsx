@@ -25,7 +25,6 @@ export function RoutePage(props: {
       "sm:overflow-visible",
       "duration-300 starting:opacity-0",
       "sm:relative",
-      props.className,
       props.classNames?.all,
       isCurrentPath ? "" : "pointer-events-none",
       isCurrentPath
@@ -38,7 +37,10 @@ export function RoutePage(props: {
     )}
     data-current={isCurrentPath ? "" : undefined}
   >
-    <div className="flex flex-col p-4 bg-bg min-h-screen pb-40">
+    <div className={cn(
+      "flex flex-col p-4 bg-bg min-h-screen pb-40",
+      props.className,
+    )}>
       {props.children}
     </div>
   </div>
@@ -65,7 +67,6 @@ export function useRouter() {
 
     return {
       current: window.location.pathname + window.location.search,
-      // current: "/",
       history: [] as string[],
       interruptors: new Set<() => void>,
       meta: {

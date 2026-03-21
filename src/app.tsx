@@ -32,16 +32,20 @@ function Init(props: { children: React.ReactNode }) {
   if (appClient === undefined || packageJson === undefined || userSettings === undefined || !wsReady) {
     return <div className="grid place-items-center h-screen w-screen ">
       <div className="grid w-50 starting:opacity-0 transition-all">
-        <div className="animate-pulse text-fg-3">Loading...</div><br />
-        <div className="animate-pulse text-fg-3">Client: {!!appClient ? "Ready" : "Not Ready"}</div>
-        <div className="animate-pulse text-fg-3">PackageJSON: {!!packageJson ? "Ready" : "Not Ready"}</div>
-        <div className="animate-pulse text-fg-3">UserSettings: {!!userSettings ? "Ready" : "Not Ready"}</div>
-        <div className="animate-pulse text-fg-3">WebSocket: {wsReady ? "Ready" : "Not Ready"}</div>
+        <div className="animate-pulse text-fg-3">
+          <div>Loading...</div><br />
+          <div>Client: {!!appClient ? "Ready" : "Not Ready"}</div>
+          <div>PackageJSON: {!!packageJson ? "Ready" : "Not Ready"}</div>
+          <div>UserSettings: {!!userSettings ? "Ready" : "Not Ready"}</div>
+          <div>WebSocket: {wsReady ? "Ready" : "Not Ready"}</div>
+        </div>
       </div>
     </div>
   }
   return <>{props.children}</>
 }
+
+
 
 function App() {
 
@@ -59,27 +63,27 @@ function App() {
           <Home />
         </RoutePage>
 
-        <RoutePage path="/_changelog" className="max-w-xl mx-auto">
+        <RoutePage path="/_changelog" className="max-w-lg mx-auto">
           <SubpageHeader title="Changelog" onBackClick={() => router.navigate("/", "backward")} />
           <ManagerChangelogPage />
         </RoutePage>
 
-        <RoutePage path="/package-json" className="max-w-xl mx-auto">
+        <RoutePage path="/package-json" className="max-w-lg mx-auto">
           <SubpageHeader title="Project Settings" onBackClick={() => router.navigate("/", "backward")} />
           <ProjectSettings />
         </RoutePage>
 
-        <RoutePage path="/scripts" className="max-w-xl mx-auto">
+        <RoutePage path="/scripts" className="max-w-lg mx-auto">
           <SubpageHeader title="Project Scripts" onBackClick={() => router.navigate("/", "backward")} />
           <ProjectScripts />
         </RoutePage>
 
-        <RoutePage path="/dependencies" className="max-w-xl mx-auto">
+        <RoutePage path="/dependencies" className="max-w-lg mx-auto">
           <SubpageHeader title="Project Dependencies" onBackClick={() => router.navigate("/", "backward")} />
           <DependencyPage />
         </RoutePage>
 
-        <RoutePage path="/dependencies/add" className="max-w-xl mx-auto">
+        <RoutePage path="/dependencies/add" className="max-w-lg mx-auto">
           <SubpageHeader title="Add Dependency (WIP)" onBackClick={() => router.navigate("/dependencies", "backward")} />
           <AddDependencyPage />
         </RoutePage>
