@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+:root {
+  font-size: 14px;
+}
+
+body {
+  @apply bg-bg text-fg;
+}
+
 @theme {
   --foreground: oklch(87.2% 0.01 258.338); /* gray-300 */
   --background: oklch(20.882% 0.02142 263.96); /* gray-900  */
@@ -34,6 +42,8 @@
 
   --breakpoint-xs: 480px;
   --breakpoint-xxs: 360px;
+
+  /* --text-base: 0.875rem; */
 }
 
 @layer components {
