@@ -1,6 +1,6 @@
 import { usePackageJson } from "../../features/package-json-client"
 import { call, useAppClient } from "../app-client"
-import { useRouter } from "../app-routes"
+import { homeRoutes, useRouter } from "../app-routes"
 import { LucideArrowUpRight, LucideLink, LucideListTree, LucidePackage, LucideTerminal, MaterialSymbolsPlayArrowRounded, MingcuteAttachmentLine } from "../app-ui"
 import { useTerminals, useTerminalWindow } from "./Console"
 
@@ -31,21 +31,15 @@ export function Home() {
           <HomeLinksSection />
 
           <div className="-mx-1 bg-bg-2/50 rounded-xl overflow-hidden p-2">
-            <MenuItem
-              title="package.json" description="Edit project settings."
-              onClick={() => router.navigate("/package-json", "forward")}
-              icon={<LucidePackage className="w-full h-full" />}
-            />
-            <MenuItem
-              title="Scripts" description="Edit project scripts."
-              onClick={() => router.navigate("/scripts", "forward")}
-              icon={<LucideTerminal className="w-full h-full" />}
-            />
-            <MenuItem
-              title="Dependencies" description="Edit project dependencies."
-              onClick={() => router.navigate("/dependencies", "forward")}
-              icon={<LucideListTree className="w-full h-full" />}
-            />
+            {homeRoutes.map(route => (
+              <MenuItem
+                key={route.path}
+                title={route.title}
+                description={route.description}
+                onClick={() => router.navigate(route.path, "forward")}
+                icon={route.icon}
+              />
+            ))}
           </div>
 
         </div>
@@ -90,9 +84,8 @@ function MenuItem(props: {
   return <button
     onClick={props.onClick}
     className="flex w-full p-3 px-4 pb-3 hover:bg-bg-2 cursor-pointer active:hover:bg-bg-2 rounded-xl">
-    <div className="w-5 h-5 text-fg-3 shrink-0 mt-1 mr-3">
+    <div className="w-5 h-5 text-fg-3 shrink-0 mt-1 mr-3 *:w-full *:h-full">
       {props.icon}
-      {/* <LucidePackage className="w-full h-full" /> */}
     </div>
     <div className="flex flex-col gap-0 text-start grow">
       <div className="text-fg text-base">{props.title}</div>

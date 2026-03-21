@@ -1,6 +1,7 @@
 import { cn } from "lazy-cn"
 import { matchRoute } from "../lib/react-route"
 import { useQuery } from "../lib/react-store"
+import { LucideListTree, LucidePackage, LucideTerminal } from "./app-ui"
 
 export function RoutePage(props: {
   children: React.ReactNode,
@@ -108,3 +109,53 @@ export function useRouter() {
     addInterruption,
   }
 }
+
+
+export const routes: {
+  title: string,
+  path: string,
+  description?: string,
+  icon?: React.ReactNode,
+  hideInSidebar?: boolean,
+  hideInHome?: boolean,
+}[] = [
+    {
+      title: "Home",
+      path: "/",
+      hideInHome: true,
+    },
+    {
+      title: "Changelog",
+      path: "/_changelog",
+      hideInHome: true,
+      hideInSidebar: true,
+    },
+    {
+      title: "Project Settings",
+      path: "/package-json",
+      icon: <LucidePackage />,
+      description: "Edit project settings.",
+    },
+    {
+      title: "Scripts",
+      path: "/scripts",
+      icon: <LucideTerminal />,
+      description: "Edit project scripts.",
+    },
+    {
+      title: "Dependencies",
+      path: "/dependencies",
+      icon: <LucideListTree />,
+      description: "Edit project dependencies.",
+    },
+    {
+      title: "Add Dependency",
+      path: "/dependencies/add",
+      hideInSidebar: true,
+      hideInHome: true,
+    }
+  ]
+
+export const sidebarRoutes = routes.filter(route => !route.hideInSidebar)
+
+export const homeRoutes = routes.filter(route => !route.hideInHome)

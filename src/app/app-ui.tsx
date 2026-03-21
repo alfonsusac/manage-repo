@@ -3,10 +3,25 @@ import { useEffect, useRef, useState, type ChangeEvent, type ComponentProps, typ
 import { useAsync } from "../lib/react-async"
 import type { MaybePromise } from "bun"
 
+
+export function SubpageHeader(props: {
+  onBackClick: () => void,
+  title: React.ReactNode
+}) {
+  return <header className="flex items-end gap-1 -mt-4 pb-4 sticky top-0 bg-bg z-50 h-16 sm:h-20!">
+    <div className={cn(
+      "cursor-pointer text-fg-3 w-8 h-8 -ml-1 rounded-2xl hover:bg-fg-2/10 grid place-items-center",
+      "sm:hidden!"
+    )}
+      onClick={props.onBackClick}
+    >{'←'}</div>
+    <h2 className="font-medium text-xl text-fg">{props.title}</h2>
+  </header>
+}
 export function H2(props: ComponentProps<"h2">) {
   return <h2
     {...props}
-    className={cn("text-lg text-fg font-medium sticky top-16 bg-bg z-10 pb-3 -mb-3 -translate-y-px", props.className)}
+    className={cn("text-lg text-fg font-medium sticky top-16 sm:top-20! bg-bg z-10 pb-3 -mb-3 -translate-y-px", props.className)}
     onClick={(e) => {
       console.log("scrolling to", e.currentTarget.offsetTop)
       window.scrollTo({ top: e.currentTarget.offsetTop - 16, behavior: "smooth" })
